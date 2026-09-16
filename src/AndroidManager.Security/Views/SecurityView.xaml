@@ -1,0 +1,376 @@
+<UserControl x:Class="AndroidManager.Security.Views.SecurityView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:c="clr-namespace:AndroidManager.Security.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="720" d:DesignWidth="960"
+             Background="{DynamicResource Nexus.Background}">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <c:InverseBooleanConverter x:Key="InvertBool" />
+        <c:NonZeroToVisibilityConverter x:Key="NonZeroToVis" />
+    </UserControl.Resources>
+
+    <TabControl SelectedIndex="{Binding SelectedTab}" Margin="8"
+                Background="{DynamicResource Nexus.Background}"
+                BorderThickness="0">
+        <!-- Durum -->
+        <TabItem Header="Güvenlik durumu">
+            <ScrollViewer Style="{StaticResource NexusPageScroll}">
+                <StackPanel MaxWidth="760">
+                    <Border Style="{StaticResource NexusCardElevated}" Margin="0,0,0,16"
+                            Background="{DynamicResource Nexus.PrimarySubtle}"
+                            BorderBrush="{DynamicResource Nexus.Primary}"
+                            BorderThickness="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Margin="0,0,24,0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding ScoreText}"
+                                           Style="{StaticResource Nexus.Text.H1}"
+                                           FontSize="48"
+                                           Foreground="{DynamicResource Nexus.Primary}"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="/ 100"
+                                           Style="{StaticResource Nexus.Text.Caption}"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Status.StatusText, FallbackValue=Henüz tarama yapılmadı}"
+                                           Style="{StaticResource Nexus.Text.H2}" />
+                                <TextBlock Text="{Binding RiskText}"
+                                           Style="{StaticResource Nexus.Text.Body}"
+                                           Foreground="{DynamicResource Nexus.Warning}"
+                                           Margin="0,6,0,0" />
+                                <TextBlock Text="{Binding ConfidenceText}"
+                                           Style="{StaticResource Nexus.Text.Caption}"
+                                           Foreground="{DynamicResource Nexus.Primary}"
+                                           Margin="0,2,0,0" />
+                                <TextBlock Margin="0,10,0,0" Style="{StaticResource Nexus.Text.Caption}">
+                                    <Run Text="Son tarama: " />
+                                    <Run Text="{Binding Status.LastScanDate, StringFormat=dd.MM.yyyy HH:mm, FallbackValue=—}" />
+                                </TextBlock>
+                                <TextBlock Style="{StaticResource Nexus.Text.Caption}" Margin="0,2,0,0">
+                                    <Run Text="Tanım v" />
+                                    <Run Text="{Binding Status.DefinitionsVersion, FallbackValue=?}" />
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource NexusCard}" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="TARAMA KAPSAMI"
+                                       Style="{StaticResource NexusSectionHeader}" />
+                            <UniformGrid Columns="3" Rows="3">
+                                <CheckBox Content="Uygulamalar" IsChecked="{Binding ScanApps}" Margin="0,4"
+                                          Foreground="{DynamicResource Nexus.TextPrimary}" />
+                                <CheckBox Content="Dosyalar" IsChecked="{Binding ScanFiles}" Margin="0,4"
+                                          Foreground="{DynamicResource Nexus.TextPrimary}" />
+                                <CheckBox Content="Ağ" IsChecked="{Binding ScanNetwork}" Margin="0,4"
+                                          Foreground="{DynamicResource Nexus.TextPrimary}" />
+                                <CheckBox Content="Ayrıcalıklar" IsChecked="{Binding ScanPrivileges}" Margin="0,4"
+                                          Foreground="{DynamicResource Nexus.TextPrimary}" />
+                                <CheckBox Content="Kalıcılık" IsChecked="{Binding ScanPersistence}" Margin="0,4"
+                                          Foreground="{DynamicResource Nexus.TextPrimary}" />
+                                <CheckBox Content="Bütünlük / Boot" IsChecked="{Binding ScanIntegrity}" Margin="0,4"
+                                          Foreground="{DynamicResource Nexus.TextPrimary}" />
+                                <CheckBox Content="Derin APK analizi" IsChecked="{Binding DeepScan}" Margin="0,4"
+                                          Foreground="{DynamicResource Nexus.TextPrimary}" />
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Height="48"
+                                Command="{Binding QuickScanCommand}"
+                                IsEnabled="{Binding IsScanning, Converter={StaticResource InvertBool}}"
+                                Style="{StaticResource NexusPrimaryButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="Radar" Margin="0,0,8,0" VerticalAlignment="Center"
+                                             Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                                <TextBlock Text="Virüs tarama" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Grid.Column="2" Height="48"
+                                Command="{Binding FullScanCommand}"
+                                IsEnabled="{Binding IsScanning, Converter={StaticResource InvertBool}}"
+                                Style="{StaticResource NexusDangerButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="ShieldSearch" Margin="0,0,8,0" VerticalAlignment="Center"
+                                             Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                                <TextBlock Text="Tam tarama" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Grid.Column="4" Height="48"
+                                Command="{Binding RescueScanCommand}"
+                                IsEnabled="{Binding IsScanning, Converter={StaticResource InvertBool}}"
+                                Style="{StaticResource NexusSecondaryButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="Lifebuoy" Margin="0,0,8,0" VerticalAlignment="Center"
+                                             Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                                <TextBlock Text="Kurtarma" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <Border Style="{StaticResource NexusCard}" Margin="0,0,0,12"
+                            Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,8">
+                                <TextBlock Text="{Binding ScanProgress.Phase}"
+                                           Style="{StaticResource Nexus.Text.H3}" />
+                                <Button HorizontalAlignment="Right"
+                                        Command="{Binding CancelScanCommand}"
+                                        Style="{StaticResource NexusTertiaryButton}"
+                                        Content="İptal" />
+                            </Grid>
+                            <ProgressBar Value="{Binding ScanProgress.Percentage}" Maximum="100" Height="8"
+                                         Foreground="{DynamicResource Nexus.Primary}"
+                                         Background="{DynamicResource Nexus.SurfaceHover}"
+                                         BorderThickness="0" />
+                            <TextBlock Margin="0,8,0,0"
+                                       Style="{StaticResource Nexus.Text.Mono}"
+                                       Text="{Binding ScanProgress.CurrentItem}"
+                                       TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="{Binding StatusMessage}" Margin="0,0,0,12"
+                               Style="{StaticResource Nexus.Text.Caption}" />
+
+                    <Button Command="{Binding UpdateDefinitionsCommand}"
+                            Style="{StaticResource NexusSecondaryButton}"
+                            HorizontalAlignment="Left" Height="40">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="DatabaseSync" Margin="0,0,8,0" VerticalAlignment="Center"
+                                         Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                            <TextBlock Text="Tehdit tanımlarını yenile" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <TextBlock Text="TARAMA GEÇMİŞİ" Margin="0,20,0,8"
+                               Style="{StaticResource NexusSectionHeader}" />
+                    <ItemsControl ItemsSource="{Binding History}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource NexusCard}" Padding="8,6" Margin="0,0,0,4">
+                                    <Grid>
+                                        <TextBlock Style="{StaticResource Nexus.Text.Body}">
+                                            <Run Text="{Binding StartedAt, StringFormat=dd.MM.yyyy HH:mm}" />
+                                            <Run Text=" · " />
+                                            <Run Text="{Binding DeviceModel}" />
+                                        </TextBlock>
+                                        <TextBlock HorizontalAlignment="Right"
+                                                   Style="{StaticResource Nexus.Text.Caption}">
+                                            <Run Text="Skor " />
+                                            <Run Text="{Binding Score}" />
+                                            <Run Text=" · " />
+                                            <Run Text="{Binding ThreatCount}" />
+                                            <Run Text=" tehdit" />
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+
+        <!-- Tehditler -->
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Tehditler" VerticalAlignment="Center" />
+                    <Border Background="{DynamicResource Nexus.Danger}"
+                            CornerRadius="{DynamicResource Nexus.RadiusBadge}"
+                            Padding="6,1" Margin="8,0,0,0"
+                            Visibility="{Binding Threats.Count, Converter={StaticResource NonZeroToVis}}">
+                        <TextBlock Text="{Binding Threats.Count}"
+                                   Foreground="White" FontSize="11" FontWeight="Bold" />
+                    </Border>
+                </StackPanel>
+            </TabItem.Header>
+            <Grid Background="{DynamicResource Nexus.Background}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" Style="{StaticResource NexusCard}" Margin="8,8,8,0" Padding="8,6">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Command="{Binding SelectAllCommand}" Content="Tümünü seç"
+                                Style="{StaticResource NexusTertiaryButton}" Margin="0,0,4,0" />
+                        <Button Command="{Binding SelectCriticalCommand}" Content="Yüksek+ seç"
+                                Style="{StaticResource NexusTertiaryButton}" Margin="0,0,8,0" />
+                        <Button Command="{Binding CleanSelectedCommand}"
+                                IsEnabled="{Binding IsCleaning, Converter={StaticResource InvertBool}}"
+                                Style="{StaticResource NexusDangerButton}"
+                                Margin="0,0,8,0">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="Delete" Margin="0,0,4,0" VerticalAlignment="Center"
+                                             Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                                <TextBlock Text="Seçilenleri temizle" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding CleanAllCommand}" Content="Tümünü temizle"
+                                Style="{StaticResource NexusSecondaryButton}" Margin="0,0,8,0" />
+                        <Button Command="{Binding QuarantineSelectedCommand}"
+                                Style="{StaticResource NexusSecondaryButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="ShieldLock" Margin="0,0,4,0" VerticalAlignment="Center"
+                                             Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                                <TextBlock Text="Karantina" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="1" Padding="12,8" Margin="8,8,8,0"
+                        Background="{DynamicResource Nexus.WarningSubtle}"
+                        CornerRadius="{DynamicResource Nexus.RadiusControl}"
+                        Visibility="{Binding IsCleaning, Converter={StaticResource BoolToVis}}">
+                    <TextBlock Style="{StaticResource Nexus.Text.Body}">
+                        <Run Text="{Binding CleanProgress.CurrentThreat}" />
+                        <Run Text=" (" />
+                        <Run Text="{Binding CleanProgress.Done}" />
+                        <Run Text="/" />
+                        <Run Text="{Binding CleanProgress.Total}" />
+                        <Run Text=")" />
+                    </TextBlock>
+                </Border>
+                <ScrollViewer Grid.Row="2" Style="{StaticResource NexusPageScroll}">
+                    <ItemsControl ItemsSource="{Binding Threats}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource NexusCard}" Margin="0,0,0,8">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <CheckBox IsChecked="{Binding IsSelected}" Margin="0,0,10,0"
+                                                      VerticalAlignment="Center" />
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="{Binding Name}"
+                                                           Style="{StaticResource Nexus.Text.H3}" />
+                                                <TextBlock Style="{StaticResource Nexus.Text.Caption}">
+                                                    <Run Text="{Binding TypeLabel}" />
+                                                    <Run Text=" · " />
+                                                    <Run Text="{Binding SeverityLabel}" />
+                                                    <Run Text=" · " />
+                                                    <Run Text="{Binding ScoreLabel}" />
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="2" Text="{Binding DetectedAt}"
+                                                       Style="{StaticResource Nexus.Text.Caption}" />
+                                        </Grid>
+                                        <TextBlock Grid.Row="1" Text="{Binding Description}"
+                                                   TextWrapping="Wrap" Margin="28,6,0,0"
+                                                   Style="{StaticResource Nexus.Text.Body}" />
+                                        <TextBlock Grid.Row="2" Text="{Binding EvidenceText}"
+                                                   TextWrapping="Wrap" Margin="28,4,0,0"
+                                                   Style="{StaticResource Nexus.Text.Caption}" />
+                                        <Border Grid.Row="3" Margin="28,8,0,0" Padding="8,6"
+                                                CornerRadius="{DynamicResource Nexus.RadiusControl}"
+                                                Background="{DynamicResource Nexus.WarningSubtle}"
+                                                BorderBrush="{DynamicResource Nexus.Warning}"
+                                                BorderThickness="1">
+                                            <TextBlock Style="{StaticResource Nexus.Text.Caption}"
+                                                       Foreground="{DynamicResource Nexus.Warning}"
+                                                       Text="{Binding Advice}" TextWrapping="Wrap" />
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </TabItem>
+
+        <!-- Risk faktörleri -->
+        <TabItem Header="Risk faktörleri">
+            <ScrollViewer Style="{StaticResource NexusPageScroll}">
+                <ItemsControl ItemsSource="{Binding RiskFactors}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource NexusCard}" Margin="0,0,0,8">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" Style="{StaticResource Nexus.Text.H3}" />
+                                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap"
+                                               Margin="0,4,0,0" Style="{StaticResource Nexus.Text.Body}" />
+                                    <TextBlock Text="{Binding Advice}" Margin="0,6,0,0"
+                                               Style="{StaticResource Nexus.Text.Caption}" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </TabItem>
+
+        <!-- Karantina -->
+        <TabItem Header="Karantina">
+            <Grid Background="{DynamicResource Nexus.Background}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" Style="{StaticResource NexusCard}" Margin="12,12,12,0"
+                        Background="{DynamicResource Nexus.PrimarySubtle}"
+                        BorderBrush="{DynamicResource Nexus.Primary}"
+                        BorderThickness="1">
+                    <TextBlock Style="{StaticResource Nexus.Text.Caption}" TextWrapping="Wrap"
+                               Text="Karantina: APK Windows tarafına kopyalanır, cihazda disable edilir. Geri yüklemeden önce tanım yeniden kontrol edilir." />
+                </Border>
+                <ListBox Grid.Row="1" ItemsSource="{Binding Quarantine}" BorderThickness="0"
+                         Background="Transparent" Margin="8">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource NexusCard}" Margin="4,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" Style="{StaticResource Nexus.Text.H3}" />
+                                        <TextBlock Text="{Binding PackageName}"
+                                                   Style="{StaticResource Nexus.Text.Mono}" />
+                                    </StackPanel>
+                                    <Button Grid.Column="1"
+                                            Command="{Binding DataContext.RestoreFromQuarantineCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Content="Geri yükle"
+                                            Style="{StaticResource NexusSecondaryButton}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</UserControl>

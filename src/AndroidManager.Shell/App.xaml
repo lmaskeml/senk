@@ -1,0 +1,24 @@
+<prism:PrismApplication x:Class="AndroidManager.Shell.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Cyan" SecondaryColor="Cyan" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+                <ResourceDictionary Source="Themes/Nexus/NexusSpacing.xaml" />
+                <ResourceDictionary Source="Themes/Nexus/NexusTypography.xaml" />
+                <ResourceDictionary Source="Themes/Nexus/NexusColors.Dark.xaml" />
+                <ResourceDictionary Source="Themes/Nexus/NexusCards.xaml" />
+                <ResourceDictionary Source="Themes/Nexus/NexusControls.xaml" />
+                <ResourceDictionary Source="Themes/Nexus/NexusNavigation.xaml" />
+                <ResourceDictionary Source="Themes/Nexus/NexusStates.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <sys:Double x:Key="GlobalFontSize">14</sys:Double>
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        </ResourceDictionary>
+    </Application.Resources>
+</prism:PrismApplication>

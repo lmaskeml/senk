@@ -1,0 +1,55 @@
+SeND ANDROID MANAGER
+Kurulum ve Kullanım (Çok Basit!)
+
+Programı kullanmak için hiçbir teknik bilgiye ihtiyacınız yoktur.
+Her şey tek bir kurulum dosyasının içinde hazır gelir
+(gerekli ADB ve yansıtma araçları dahildir).
+
+============================================================
+Adım 1: Bilgisayara kurulum
+============================================================
+1. İndirmeler bölümünden AndroidManager_Kurulum.exe dosyasını indirin.
+2. Çift tıklayıp çalıştırın ve standart kurulumu (İleri > İleri > Kur)
+   tamamlayın.
+3. Kurulum bittiğinde program bilgisayarınıza yüklenmiş olacak.
+
+Bu sihirbaz tam olarak o kurulumu yapar.
+
+============================================================
+Adım 2: Telefon ayarları (sadece bir kere yapılır)
+============================================================
+Uygulamanın telefonunuzu görebilmesi için "USB Hata Ayıklama"
+açık olmalıdır:
+
+1. Telefonunuzda Ayarlar > Telefon Hakkında menüsüne girin.
+2. Derleme Numarası yazan yere art arda 7 kez hızlıca dokunun
+   (ekranda "Artık geliştiricisiniz" yazar).
+3. Geri çıkıp Ayarlar > Sistem > Geliştirici Seçenekleri menüsüne girin.
+   (Bazı markalarda: Ayarlar > Ek ayarlar > Geliştirici seçenekleri)
+4. USB Hata Ayıklama seçeneğini bulup Açık konuma getirin.
+
+============================================================
+Adım 3: Telefonu bağlayın
+============================================================
+1. Telefonunuzu USB kablosuyla bilgisayara bağlayın.
+2. Masaüstündeki Android Manager kısayolundan programı açın.
+3. Telefon ekranınıza "USB Hata Ayıklamasına İzin Verilsin mi?"
+   uyarısı gelecektir. "Her zaman izin ver" kutucuğunu işaretleyip
+   Tamam'a basın. Hepsi bu kadar!
+
+============================================================
+Kablosuz kullanım ve Companion uygulaması (isteğe bağlı)
+============================================================
+Programı kurduğunuzda bilgisayarınızın masaüstüne
+AM_Companion_Kurulum.apk adında bir dosya çıkarılır.
+
+Telefonunuzu kablo olmadan, Wi-Fi üzerinden yönetmek isterseniz:
+
+1. Bu APK dosyasını telefonunuza atın ve kurun.
+2. Telefonunuzla bilgisayarınızın aynı Wi-Fi ağına bağlı olduğundan
+   emin olun.
+3. Telefondaki uygulamayı açın ve ekrandaki eşleştirme koduyla
+   bilgisayardaki programa kablosuz bağlanın.
+
+Not: Framework bağımlı kurulum .NET 10 Desktop Runtime ister.
+Kurulum sihirbazı eksikse sizi uyarır.

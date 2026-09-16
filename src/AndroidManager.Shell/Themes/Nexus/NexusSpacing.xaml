@@ -1,0 +1,22 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+    <sys:Double x:Key="Nexus.Space4">4</sys:Double>
+    <sys:Double x:Key="Nexus.Space8">8</sys:Double>
+    <sys:Double x:Key="Nexus.Space12">12</sys:Double>
+    <sys:Double x:Key="Nexus.Space16">16</sys:Double>
+    <sys:Double x:Key="Nexus.Space20">20</sys:Double>
+    <sys:Double x:Key="Nexus.Space24">24</sys:Double>
+    <sys:Double x:Key="Nexus.Space32">32</sys:Double>
+    <sys:Double x:Key="Nexus.Space40">40</sys:Double>
+    <sys:Double x:Key="Nexus.Space48">48</sys:Double>
+    <CornerRadius x:Key="Nexus.RadiusCard">12</CornerRadius>
+    <CornerRadius x:Key="Nexus.RadiusControl">8</CornerRadius>
+    <CornerRadius x:Key="Nexus.RadiusBadge">999</CornerRadius>
+    <CornerRadius x:Key="Nexus.RadiusNav">8</CornerRadius>
+    <Thickness x:Key="Nexus.CardPadding">16</Thickness>
+    <Thickness x:Key="Nexus.CardPaddingLarge">20</Thickness>
+    <Thickness x:Key="Nexus.SectionMargin">0,0,0,24</Thickness>
+    <sys:Double x:Key="Nexus.SidebarExpandedWidth">248</sys:Double>
+    <sys:Double x:Key="Nexus.SidebarCollapsedWidth">72</sys:Double>
+</ResourceDictionary>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <!--
+    Minimal WiX v4 package. Prefer installer/build.ps1 zip output when WiX SDK
+    is not installed. Set UpgradeCode once for production releases.
+  -->
+  <Package Name="SeND ANDROID MANAGER"
+           Manufacturer="SeND"
+           Version="$(Version)"
+           UpgradeCode="A1B2C3D4-E5F6-7890-ABCD-EF1234567890"
+           Scope="perMachine">
+
+    <MajorUpgrade DowngradeErrorMessage="Daha yeni bir sürüm zaten yüklü." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="ProductFeature" Title="SeND ANDROID MANAGER" Level="1">
+      <ComponentGroupRef Id="HarvestedPublish" />
+      <ComponentGroupRef Id="Shortcuts" />
+    </Feature>
+
+    <ui:WixUI Id="WixUI_InstallDir" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+  </Package>
+
+  <Fragment>
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="SeND ANDROID MANAGER" />
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="SeND ANDROID MANAGER" />
+    </StandardDirectory>
+  </Fragment>
+
+  <!--
+    Harvest publish folder at build time via HeatWave / Files element.
+    For a first cut, ship the zip from build.ps1 and expand this fragment
+    when WiX harvest is configured in CI.
+  -->
+  <Fragment>
+    <ComponentGroup Id="HarvestedPublish" Directory="INSTALLFOLDER">
+      <Component Id="PlaceholderReadme" Guid="*">
+        <File Source="README.txt" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="Shortcuts" Directory="ApplicationProgramsFolder">
+      <Component Id="StartMenuShortcut" Guid="*">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="SeND ANDROID MANAGER"
+                  Description="SeND ANDROID MANAGER cihaz yönetim uygulaması"
+                  Target="[INSTALLFOLDER]AndroidManager.Shell.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <RemoveFolder Id="RemoveProgramMenuFolder" On="uninstall" />
+        <RegistryValue Root="HKCU"
+                       Key="Software\AndroidManager"
+                       Name="installed"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

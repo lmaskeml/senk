@@ -1,0 +1,102 @@
+<Window x:Class="AndroidManager.Gallery.Views.GalleryPreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Önizleme"
+        Width="960"
+        Height="720"
+        WindowStartupLocation="CenterOwner"
+        Background="#121218"
+        Closed="Window_OnClosed">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Margin="12">
+            <Button DockPanel.Dock="Right"
+                    Content="Kapat"
+                    Click="Close_OnClick"
+                    Padding="16,6"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    Foreground="White" />
+            <TextBlock x:Name="InfoText"
+                       Foreground="#DDDDDD"
+                       VerticalAlignment="Center"
+                       TextTrimming="CharacterEllipsis" />
+        </DockPanel>
+
+        <Grid Grid.Row="1" Margin="8">
+            <Image x:Name="ImageViewer" Stretch="Uniform" />
+            <MediaElement x:Name="VideoPlayer"
+                          LoadedBehavior="Manual"
+                          UnloadedBehavior="Stop"
+                          Stretch="Uniform"
+                          Volume="0.7"
+                          MediaOpened="VideoPlayer_OnMediaOpened"
+                          MediaEnded="VideoPlayer_OnMediaEnded"
+                          Visibility="Collapsed" />
+        </Grid>
+
+        <Border Grid.Row="2" Padding="12,8" Background="#1E1E28">
+            <StackPanel>
+                <StackPanel x:Name="VideoControls" Visibility="Collapsed">
+                    <Slider x:Name="SeekSlider"
+                            Minimum="0"
+                            Maximum="1"
+                            Value="0"
+                            IsMoveToPointEnabled="True"
+                            PreviewMouseLeftButtonDown="SeekSlider_OnPreviewMouseLeftButtonDown"
+                            PreviewMouseLeftButtonUp="SeekSlider_OnPreviewMouseLeftButtonUp"
+                            Margin="0,0,0,8" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Click="SeekBack_OnClick" ToolTip="-10 sn"
+                                    Style="{StaticResource MaterialDesignIconFlatButton}" Foreground="White">
+                                <md:PackIcon Kind="Rewind10" />
+                            </Button>
+                            <Button x:Name="PlayPauseButton" Click="PlayPause_OnClick" ToolTip="Oynat / Duraklat"
+                                    Style="{StaticResource MaterialDesignIconFlatButton}" Foreground="White">
+                                <md:PackIcon x:Name="PlayPauseIcon" Kind="Pause" />
+                            </Button>
+                            <Button Click="SeekForward_OnClick" ToolTip="+10 sn"
+                                    Style="{StaticResource MaterialDesignIconFlatButton}" Foreground="White">
+                                <md:PackIcon Kind="FastForward10" />
+                            </Button>
+                            <Button Click="StopVideo_OnClick" ToolTip="Durdur"
+                                    Style="{StaticResource MaterialDesignIconFlatButton}" Foreground="White">
+                                <md:PackIcon Kind="Stop" />
+                            </Button>
+                        </StackPanel>
+                        <TextBlock x:Name="TimeText"
+                                   Grid.Column="1"
+                                   Text="00:00 / 00:00"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <md:PackIcon Kind="VolumeHigh" Foreground="White" VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <Slider x:Name="VolumeSlider"
+                                    Width="90"
+                                    Minimum="0"
+                                    Maximum="1"
+                                    Value="0.7"
+                                    ValueChanged="VolumeSlider_OnValueChanged" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+                <TextBlock Text="Önizleme arka planda indirilir — Wi‑Fi ADB’de büyük dosyalar yavaş olabilir."
+                           Foreground="#999"
+                           FontSize="11"
+                           Margin="0,8,0,0" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

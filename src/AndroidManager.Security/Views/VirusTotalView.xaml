@@ -1,0 +1,175 @@
+<UserControl x:Class="AndroidManager.Security.Views.VirusTotalView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="720" d:DesignWidth="960"
+             Background="{DynamicResource Nexus.Background}">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Ayarlar -->
+        <Border Grid.Row="0" Style="{StaticResource NexusCard}" Margin="0,0,0,8">
+            <StackPanel>
+                <TextBlock Text="VirusTotal" Style="{StaticResource Nexus.Text.H2}" />
+                <TextBlock Text="Hash'leri 70+ antivirüs motoruyla çapraz doğrulayın. Ücretsiz API: ~4 istek/dk, ~450/gün."
+                           Foreground="{DynamicResource Nexus.TextSecondary}" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,12" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <PasswordBox x:Name="ApiKeyBox"
+                                 md:HintAssist.Hint="API anahtarı (virustotal.com)"
+                                 Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
+                                 PasswordChanged="ApiKeyBox_OnPasswordChanged"
+                                 Margin="0,0,12,0" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <CheckBox Content="Simülasyon" IsChecked="{Binding UseSimulation}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                        <CheckBox Content="Otomatik tehdit" IsChecked="{Binding AutoUpgrade}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                        <Button Content="Kaydet" Command="{Binding SaveConfigCommand}" Padding="16,6" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Margin="0,8,0,0" FontSize="11" Foreground="{DynamicResource Nexus.TextMuted}">
+                    <Run Text="{Binding Status.QuotaText, Mode=OneWay, FallbackValue=—}" />
+                    <Run Text=" • Sonraki istek: " />
+                    <Run Text="{Binding Status.NextAllowedText, Mode=OneWay, FallbackValue=—}" />
+                    <Run Text=" • Önbellek: " />
+                    <Run Text="{Binding Status.CacheEntries, Mode=OneWay, FallbackValue=0}" />
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- Kaynaklar -->
+        <Border Grid.Row="1" Style="{StaticResource NexusCard}" Margin="0,0,0,8">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Command="{Binding LoadFromScanHistoryCommand}" Padding="10,6" Margin="0,0,6,0"
+                            ToolTip="Son tarama JSON'larından hash yükle">
+                        <TextBlock Text="Tarama geçmişi" />
+                    </Button>
+                    <Button Command="{Binding HashAllInstalledCommand}" Padding="10,6" Margin="0,0,6,0"
+                            ToolTip="Tüm kurulu APK'ları md5sum ile hash'le">
+                        <TextBlock Text="Tüm APK'lar" />
+                    </Button>
+                    <Button Command="{Binding VerifyAllCommand}" Padding="10,6" Margin="0,0,6,0"
+                            Style="{StaticResource NexusPrimaryButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="ShieldSearch" Margin="0,0,4,0" />
+                            <TextBlock Text="Tümünü doğrula" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding ExportResultsCommand}" Padding="10,6" Margin="0,0,6,0">
+                        <TextBlock Text="Dışa aktar" />
+                    </Button>
+                    <Button Command="{Binding ClearItemsCommand}" Padding="10,6">
+                        <TextBlock Text="Temizle" />
+                    </Button>
+                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding ManualHashes, UpdateSourceTrigger=PropertyChanged}"
+                             md:HintAssist.Hint="Manuel hash (MD5/SHA1/SHA256) — virgül veya satır ile"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+                    <Button Grid.Column="1" Margin="8,0,0,0" Padding="12,0"
+                            Command="{Binding AddManualHashesCommand}">
+                        <TextBlock Text="Ekle" />
+                    </Button>
+                </Grid>
+            </DockPanel>
+        </Border>
+
+        <!-- Sonuç tablosu -->
+        <ListView Grid.Row="2"
+                  ItemsSource="{Binding Items}"
+                  BorderThickness="0"
+                  VirtualizingPanel.IsVirtualizing="True">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Durum" Width="120">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding VerdictText}" FontWeight="SemiBold" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Etiket" Width="200" DisplayMemberBinding="{Binding Label}" />
+                    <GridViewColumn Header="Hash" Width="140">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Hash}" FontFamily="Consolas" FontSize="11"
+                                           TextTrimming="CharacterEllipsis" ToolTip="{Binding Hash}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Motor özeti" Width="180" DisplayMemberBinding="{Binding EngineSummary}" />
+                    <GridViewColumn Header="Eşleşmeler" Width="220" DisplayMemberBinding="{Binding TopMatchesText}" />
+                    <GridViewColumn Header="İşlem" Width="200">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="Doğrula" Padding="6,2" Margin="0,0,4,0"
+                                            Command="{Binding DataContext.VerifyItemCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                            CommandParameter="{Binding}" />
+                                    <Button Content="Yükle" Padding="6,2" Margin="0,0,4,0"
+                                            Command="{Binding DataContext.UploadItemCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="Cihazdan çekip VirusTotal'e yükle" />
+                                    <Button Content="VT" Padding="6,2"
+                                            Command="{Binding DataContext.OpenPermalinkCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="VirusTotal detay sayfası" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsThreat}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource Nexus.DangerSubtle}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+        <!-- Durum çubuğu -->
+        <Border Grid.Row="3" Padding="12,8" Margin="0,8,0,0" Background="{DynamicResource Nexus.SurfaceElevated}" CornerRadius="4">
+            <DockPanel>
+                <ProgressBar DockPanel.Dock="Right" Width="120" Height="6" Margin="12,0,0,0"
+                             Maximum="100" Value="{Binding ProgressPercent}"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}" />
+                <StackPanel>
+                    <TextBlock Text="{Binding StatusMessage}" FontSize="12" />
+                    <TextBlock Text="{Binding ProgressText}" FontSize="11" Foreground="{DynamicResource Nexus.TextMuted}"
+                               Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Row="0" Grid.RowSpan="4" Background="{DynamicResource Nexus.Surface}" Opacity="0.7"
+                Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}">
+            <ProgressBar IsIndeterminate="True" Width="200" Height="4" VerticalAlignment="Center" />
+        </Border>
+    </Grid>
+</UserControl>

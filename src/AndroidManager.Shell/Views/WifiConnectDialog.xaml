@@ -1,0 +1,348 @@
+<Window x:Class="AndroidManager.Shell.Views.WifiConnectDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:vm="clr-namespace:AndroidManager.Shell.ViewModels"
+        Title="WiFi Bağlantısı"
+        Height="620"
+        Width="580"
+        MinHeight="520"
+        MinWidth="500"
+        WindowStartupLocation="CenterOwner"
+        Background="#F5F5F5">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <vm:InverseBoolConverter x:Key="InvertBool" />
+        <vm:BoolToVisibilityExConverter x:Key="BoolToVisInv" Invert="True" />
+        <vm:CountToVisibilityConverter x:Key="ZeroToVis" />
+        <vm:CountToVisibilityConverter x:Key="NotZeroToVis" Invert="True" />
+        <vm:StringNotEmptyToVisibilityConverter x:Key="NotEmptyToVis" />
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#1E1E2E" Padding="20,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="WiFi Bağlantısı" Foreground="White" FontSize="18" FontWeight="SemiBold" />
+                    <TextBlock Text="PC ve telefon aynı Wi‑Fi’de olmalı — Companion, Android 9 ADB (5555) veya Android 11+ kablosuz hata ayıklama"
+                               Foreground="#888888" FontSize="11" Margin="0,4,0,0" />
+                </StackPanel>
+                <Border Grid.Column="1"
+                        Background="#1B5E20"
+                        CornerRadius="16"
+                        Padding="12,6"
+                        Visibility="{Binding IsConnected, Converter={StaticResource BoolToVis}}">
+                    <TextBlock Text="{Binding ConnectedDeviceName, StringFormat=Bağlı: {0}}"
+                               Foreground="#A5D6A7" FontSize="12" />
+                </Border>
+            </Grid>
+        </Border>
+
+        <TabControl Grid.Row="1" SelectedIndex="{Binding SelectedTab}" Margin="8">
+            <TabItem Header="Otomatik">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Margin="8">
+                        <ProgressBar DockPanel.Dock="Right"
+                                     IsIndeterminate="True"
+                                     Width="80" Height="4"
+                                     Margin="12,0,0,0"
+                                     Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}}" />
+                        <Button DockPanel.Dock="Right"
+                                Command="{Binding StopScanCommand}"
+                                IsEnabled="{Binding IsScanning}"
+                                Padding="10,4" Margin="0,0,8,0"
+                                Content="Durdur" />
+                        <Button DockPanel.Dock="Right"
+                                Command="{Binding StartScanCommand}"
+                                IsEnabled="{Binding IsScanning, Converter={StaticResource InvertBool}}"
+                                Padding="10,4" Margin="0,0,8,0">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="Radar" Margin="0,0,4,0" />
+                                <TextBlock Text="Tara" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text="{Binding StatusMessage}"
+                                   VerticalAlignment="Center"
+                                   Foreground="#555"
+                                   FontSize="12"
+                                   TextTrimming="CharacterEllipsis" />
+                    </DockPanel>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <ItemsControl ItemsSource="{Binding DiscoveredDevices}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="8,4" Padding="12" Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding DeviceName}" FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding SourceLabel}" FontSize="11" Foreground="#2E7D32" />
+                                                    <TextBlock Text="{Binding SubTitle}" FontSize="11" Foreground="#666" />
+                                                    <TextBlock Text="{Binding LastSeenFormatted}" FontSize="10" Foreground="#888" />
+                                                </StackPanel>
+                                                <Button Grid.Column="1"
+                                                        Command="{Binding DataContext.ConnectDiscoveredCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding}"
+                                                        Padding="12,6"
+                                                        VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <md:PackIcon Kind="Wifi" Margin="0,0,4,0" />
+                                                        <TextBlock Text="Bağlan" />
+                                                    </StackPanel>
+                                                </Button>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <StackPanel Margin="0,40,0,0"
+                                        HorizontalAlignment="Center"
+                                        Visibility="{Binding DiscoveredDevices.Count, Converter={StaticResource ZeroToVis}}">
+                                <md:PackIcon Kind="WifiOff" Width="48" Height="48" Foreground="#BBB" HorizontalAlignment="Center" />
+                                <TextBlock Text="Cihaz bulunamadı"
+                                           Foreground="#777" Margin="0,8,0,0" HorizontalAlignment="Center" />
+                                <TextBlock Text="Companion APK’yı açın, Android 9’da kablosuz ADB (5555) açın veya Android 11+ Kablosuz hata ayıklama’yı açın"
+                                           Foreground="#999" FontSize="11" HorizontalAlignment="Center" TextWrapping="Wrap"
+                                           TextAlignment="Center" MaxWidth="360" />
+                            </StackPanel>
+
+                            <StackPanel Margin="8,16,8,8"
+                                        Visibility="{Binding SavedConnections.Count, Converter={StaticResource NotZeroToVis}}">
+                                <TextBlock Text="Son bağlantılar" FontWeight="SemiBold" Margin="0,0,0,8" />
+                                <ItemsControl ItemsSource="{Binding SavedConnections}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0,0,0,6" Padding="10,8" Background="#EEEEF2" CornerRadius="6">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding DisplayName}" />
+                                                        <TextBlock FontSize="11" Foreground="#666">
+                                                            <Run Text="{Binding Endpoint, Mode=OneWay}" />
+                                                            <Run Text=" — " />
+                                                            <Run Text="{Binding LastConnectedFormatted, Mode=OneWay}" />
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                    <Button Grid.Column="1"
+                                                            Command="{Binding DataContext.ConnectSavedCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            ToolTip="Bağlan"
+                                                            Padding="6,2" Margin="4,0">
+                                                        <md:PackIcon Kind="LanConnect" />
+                                                    </Button>
+                                                    <Button Grid.Column="2"
+                                                            Command="{Binding DataContext.RemoveSavedCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            ToolTip="Kaldır"
+                                                            Padding="6,2">
+                                                        <md:PackIcon Kind="Close" />
+                                                    </Button>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <Button Grid.Row="2"
+                            Command="{Binding ConnectToSelectedCommand}"
+                            IsEnabled="{Binding IsConnecting, Converter={StaticResource InvertBool}}"
+                            Margin="8" Padding="12,8" HorizontalAlignment="Right"
+                            Content="Seçilene bağlan" />
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Manuel IP">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="20">
+                        <TextBlock TextWrapping="Wrap" Margin="0,0,0,12" Foreground="#444">
+                            Android 11+: telefondaki <Run FontWeight="SemiBold">Kablosuz hata ayıklama</Run> ekranındaki
+                            IP / portları kullanın — Companion kodu veya 5555 değil.
+                        </TextBlock>
+
+                        <TextBlock Text="IP Adresi" FontSize="12" Foreground="#666" />
+                        <TextBox Text="{Binding ManualIp, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,4,0,12" Padding="8,6" />
+
+                        <TextBlock Text="Bağlantı portu (kablosuz debug’daki IP:PORT — 5555 değil)" FontSize="12" Foreground="#666" />
+                        <TextBox Text="{Binding ManualPortText, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,4,0,12" Padding="8,6" Width="120" HorizontalAlignment="Left" />
+
+                        <TextBlock Text="Eşleştirme portu (Eşleştirme koduyla eşleştir ekranındaki port)" FontSize="12" Foreground="#666" />
+                        <TextBox Text="{Binding ManualPairingPortText, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,4,0,4" Padding="8,6" Width="120" HorizontalAlignment="Left" />
+                        <TextBlock Text="mDNS bulursa otomatik dolar; boş bırakılabilir."
+                                   FontSize="11" Foreground="#888" Margin="0,0,0,12" />
+
+                        <TextBlock Text="Eşleştirme kodu (6 hane — kablosuz debug, Companion değil)" FontSize="12" Foreground="#666" />
+                        <TextBox Text="{Binding ManualPairCode, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,4,0,4" Padding="8,6" />
+                        <TextBlock Text="İlk bağlantıda zorunlu. Companion «Bağlı» yazsa bile ADB değildir."
+                                   FontSize="11" Foreground="#888" Margin="0,0,0,16" />
+
+                        <Button Command="{Binding ConnectManualCommand}"
+                                IsEnabled="{Binding IsConnecting, Converter={StaticResource InvertBool}}"
+                                Padding="12,8" HorizontalAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="LanConnect" Margin="0,0,6,0" />
+                                <TextBlock Text="Bağlan" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="QR">
+                <Grid Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Border Background="#111118" CornerRadius="8">
+                        <Grid>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        Visibility="{Binding IsCameraActive, Converter={StaticResource BoolToVisInv}}">
+                                <md:PackIcon Kind="QrcodeScan" Width="64" Height="64" Foreground="#444" HorizontalAlignment="Center" />
+                                <TextBlock Text="Kamera kapalı — dosya / clipboard / yapıştırma kullanın"
+                                           Foreground="#666" Margin="0,8,0,0" HorizontalAlignment="Center" FontSize="12" />
+                            </StackPanel>
+                            <Image Source="{Binding CameraFrame}"
+                                   Stretch="Uniform"
+                                   Visibility="{Binding IsCameraActive, Converter={StaticResource BoolToVis}}" />
+                        </Grid>
+                    </Border>
+
+                    <StackPanel Grid.Row="1" Margin="0,10,0,0">
+                        <UniformGrid Columns="2" Margin="0,0,0,6">
+                            <Button Command="{Binding StartCameraCommand}"
+                                    IsEnabled="{Binding IsCameraActive, Converter={StaticResource InvertBool}}"
+                                    Margin="0,0,4,0" Padding="10,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Camera" Margin="0,0,4,0" />
+                                    <TextBlock Text="Kamerayı Aç" />
+                                </StackPanel>
+                            </Button>
+                            <Button Command="{Binding StopCameraCommand}"
+                                    IsEnabled="{Binding IsCameraActive}"
+                                    Margin="4,0,0,0" Padding="10,8"
+                                    Content="Durdur" />
+                        </UniformGrid>
+                        <UniformGrid Columns="2" Margin="0,0,0,6">
+                            <Button Command="{Binding ReadQrFromFileCommand}" Margin="0,0,4,0" Padding="8,6">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="FileImage" Margin="0,0,4,0" />
+                                    <TextBlock Text="Dosyadan" />
+                                </StackPanel>
+                            </Button>
+                            <Button Command="{Binding ReadQrFromClipboardCommand}" Margin="4,0,0,0" Padding="8,6">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="ContentPaste" Margin="0,0,4,0" />
+                                    <TextBlock Text="Clipboard" />
+                                </StackPanel>
+                            </Button>
+                        </UniformGrid>
+                        <TextBox Text="{Binding QrPasteContent, UpdateSourceTrigger=PropertyChanged}"
+                                 AcceptsReturn="True"
+                                 Height="72"
+                                 TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 Margin="0,0,0,6"
+                                 md:HintAssist.Hint="QR JSON yapıştır" />
+                        <Button Command="{Binding ConnectFromQrPasteCommand}"
+                                IsEnabled="{Binding IsConnecting, Converter={StaticResource InvertBool}}"
+                                Padding="10,8"
+                                HorizontalAlignment="Left"
+                                Content="Yapıştırılan QR ile bağlan" />
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="2"
+                               Text="{Binding QrStatusMessage}"
+                               Margin="0,8,0,0"
+                               Foreground="#555"
+                               FontSize="12"
+                               Visibility="{Binding QrStatusMessage, Converter={StaticResource NotEmptyToVis}}" />
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="USB → WiFi">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="20">
+                        <TextBlock Text="USB ile bağlı cihazda ADB tcpip açıp aynı Wi‑Fi üzerinden bağlanın."
+                                   TextWrapping="Wrap" Margin="0,0,0,12" />
+                        <TextBlock Text="1) Telefon USB ile bağlı ve USB hata ayıklama açık olsun&#x0a;2) Telefon Wi‑Fi’ye bağlı olsun&#x0a;3) Aşağıdaki düğmeye basın"
+                                   FontSize="12" Foreground="#555" TextWrapping="Wrap" Margin="0,0,0,16" />
+
+                        <TextBlock Text="ADB port" FontSize="12" Foreground="#666" />
+                        <TextBox Text="{Binding UsbWifiPortText, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,4,0,16" Padding="8,6" Width="120" HorizontalAlignment="Left" />
+
+                        <Button Command="{Binding SwitchUsbToWifiCommand}"
+                                IsEnabled="{Binding IsConnecting, Converter={StaticResource InvertBool}}"
+                                Padding="12,8" HorizontalAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="Usb" Margin="0,0,6,0" />
+                                <TextBlock Text="USB’den kablosuz’a geç" />
+                            </StackPanel>
+                        </Button>
+
+                        <TextBlock Text="{Binding UsbWifiStatusMessage}"
+                                   Margin="0,16,0,0"
+                                   TextWrapping="Wrap"
+                                   Foreground="#555"
+                                   FontSize="12"
+                                   Visibility="{Binding UsbWifiStatusMessage, Converter={StaticResource NotEmptyToVis}}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+
+        <Border Grid.Row="2" Padding="12,10" Background="#EEEEF2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center" Foreground="#666" FontSize="12" />
+                <ProgressBar Grid.Column="1"
+                             IsIndeterminate="True"
+                             Height="4" Width="80"
+                             Margin="0,0,12,0"
+                             VerticalAlignment="Center"
+                             Visibility="{Binding IsConnecting, Converter={StaticResource BoolToVis}}" />
+                <Button Grid.Column="2" Command="{Binding CancelCommand}" Content="Kapat" Width="90" />
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

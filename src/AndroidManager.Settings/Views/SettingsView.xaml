@@ -1,0 +1,237 @@
+<UserControl x:Class="AndroidManager.Settings.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900"
+             Background="{DynamicResource Nexus.Background}">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Margin="16,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel>
+                <TextBlock Text="Ayarlar" Style="{StaticResource Nexus.Text.H1}" />
+                <TextBlock Text="Kaydedilmemiş değişiklikler var"
+                           Foreground="{DynamicResource Nexus.Warning}" FontSize="11"
+                           Visibility="{Binding HasUnsavedChanges, Converter={StaticResource BoolToVis}}" />
+            </StackPanel>
+
+            <Button Grid.Column="1" Command="{Binding ResetCommand}"
+                    Style="{StaticResource NexusSecondaryButton}" Margin="0,0,8,0">
+                <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="Restore" Margin="0,0,4,0" />
+                    <TextBlock Text="Sıfırla" />
+                </StackPanel>
+            </Button>
+            <Button Grid.Column="2" Command="{Binding SaveCommand}"
+                    Style="{StaticResource NexusPrimaryButton}">
+                <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="ContentSave" Margin="0,0,4,0" />
+                    <TextBlock Text="Kaydet" />
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" Style="{StaticResource NexusPageScroll}">
+            <StackPanel MaxWidth="700">
+
+                <TextBlock Text="ADB Araçları" Style="{StaticResource NexusSectionHeader}" />
+                <Border Style="{StaticResource NexusCard}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding AdbPath}" md:HintAssist.Hint="adb.exe yolu"
+                                     Style="{StaticResource NexusOutlinedTextBox}" />
+                            <Button Grid.Column="1" Command="{Binding BrowseAdbPathCommand}"
+                                    Style="{StaticResource MaterialDesignIconButton}" Margin="4,0">
+                                <md:PackIcon Kind="FolderOpen" />
+                            </Button>
+                            <Button Grid.Column="2" Command="{Binding TestAdbConnectionCommand}"
+                                    Style="{StaticResource NexusSecondaryButton}">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="TestTube" Margin="0,0,4,0" />
+                                    <TextBlock Text="Test" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding FastbootPath}" md:HintAssist.Hint="fastboot.exe yolu (Recovery flash)"
+                                     Style="{StaticResource NexusOutlinedTextBox}" />
+                            <Button Grid.Column="1" Command="{Binding BrowseFastbootPathCommand}"
+                                    Style="{StaticResource MaterialDesignIconButton}" Margin="4,0,0,0">
+                                <md:PackIcon Kind="FolderOpen" />
+                            </Button>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding ScrcpyPath}" md:HintAssist.Hint="scrcpy.exe yolu"
+                                     Style="{StaticResource NexusOutlinedTextBox}" />
+                            <Button Grid.Column="1" Command="{Binding BrowseScrcpyPathCommand}"
+                                    Style="{StaticResource MaterialDesignIconButton}" Margin="4,0,0,0">
+                                <md:PackIcon Kind="FolderOpen" />
+                            </Button>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding AaptPath}" md:HintAssist.Hint="aapt.exe yolu"
+                                     Style="{StaticResource NexusOutlinedTextBox}" />
+                            <Button Grid.Column="1" Command="{Binding BrowseAaptPathCommand}"
+                                    Style="{StaticResource MaterialDesignIconButton}" Margin="4,0,0,0">
+                                <md:PackIcon Kind="FolderOpen" />
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="Görünüm" Style="{StaticResource NexusSectionHeader}" />
+                <Border Style="{StaticResource NexusCard}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Margin="0,0,8,0">
+                                <TextBlock Text="Tema" Margin="0,0,0,4"
+                                           Foreground="{DynamicResource Nexus.TextSecondary}" />
+                                <ComboBox ItemsSource="{Binding Themes}" SelectedItem="{Binding SelectedTheme}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,8,0">
+                                <TextBlock Text="Vurgu Rengi" Margin="0,0,0,4"
+                                           Foreground="{DynamicResource Nexus.TextSecondary}" />
+                                <ComboBox ItemsSource="{Binding AccentColors}"
+                                          SelectedValue="{Binding SelectedAccent}"
+                                          SelectedValuePath="MaterialName"
+                                          DisplayMemberPath="DisplayName" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Dil" Margin="0,0,0,4"
+                                           Foreground="{DynamicResource Nexus.TextSecondary}" />
+                                <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}" />
+                            </StackPanel>
+                        </Grid>
+                        <TextBlock Text="{Binding FontSize, StringFormat=Yazı Boyutu: {0:F0}px}" Margin="0,0,0,4"
+                                   Foreground="{DynamicResource Nexus.TextSecondary}" />
+                        <Slider Value="{Binding FontSize}" Minimum="10" Maximum="18"
+                                TickFrequency="1" IsSnapToTickEnabled="True" />
+                        <CheckBox Content="Gizli dosyaları göster" IsChecked="{Binding ShowHidden}" Margin="0,8,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="Varsayılan Klasörler" Style="{StaticResource NexusSectionHeader}" />
+                <Border Style="{StaticResource NexusCard}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding DefaultDownloadPath}" IsReadOnly="True"
+                                     md:HintAssist.Hint="İndirme klasörü"
+                                     Style="{StaticResource NexusOutlinedTextBox}" />
+                            <Button Grid.Column="1" Command="{Binding BrowseDownloadPathCommand}"
+                                    Style="{StaticResource MaterialDesignIconButton}" Margin="4,0,0,0">
+                                <md:PackIcon Kind="FolderOpen" />
+                            </Button>
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding DefaultBackupPath}" IsReadOnly="True"
+                                     md:HintAssist.Hint="Yedek klasörü"
+                                     Style="{StaticResource NexusOutlinedTextBox}" />
+                            <Button Grid.Column="1" Command="{Binding BrowseBackupPathCommand}"
+                                    Style="{StaticResource MaterialDesignIconButton}" Margin="4,0,0,0">
+                                <md:PackIcon Kind="FolderOpen" />
+                            </Button>
+                        </Grid>
+                        <CheckBox Content="Aktarımda üzerine yaz" IsChecked="{Binding OverwriteOnTransfer}" Margin="0,12,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="Ekran Yansıtma" Style="{StaticResource NexusSectionHeader}" />
+                <Border Style="{StaticResource NexusCard}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="{Binding MirrorFps, StringFormat=Varsayılan FPS: {0}}"
+                                   Foreground="{DynamicResource Nexus.TextSecondary}" />
+                        <Slider Value="{Binding MirrorFps}" Minimum="15" Maximum="120"
+                                TickFrequency="15" IsSnapToTickEnabled="True" />
+                        <TextBlock Text="{Binding MirrorBitRate, StringFormat=Bit Rate: {0} Mbps}" Margin="0,8,0,0"
+                                   Foreground="{DynamicResource Nexus.TextSecondary}" />
+                        <Slider Value="{Binding MirrorBitRate}" Minimum="1" Maximum="20"
+                                TickFrequency="1" IsSnapToTickEnabled="True" />
+                        <CheckBox Content="Ekranı açık tut" IsChecked="{Binding MirrorStayAwake}" Margin="0,8,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="Kablosuz ADB Guardian" Style="{StaticResource NexusSectionHeader}" />
+                <Border Style="{StaticResource NexusCard}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <CheckBox Content="Otomatik yeniden bağlan" IsChecked="{Binding WirelessAutoReconnect}" Margin="0,4" />
+                        <CheckBox Content="mDNS keşfi" IsChecked="{Binding WirelessMdnsDiscovery}" Margin="0,4" />
+                        <CheckBox Content="Companion keşfi" IsChecked="{Binding WirelessCompanionDiscovery}" Margin="0,4" />
+                        <CheckBox Content="Uç noktayı otomatik kurtar" IsChecked="{Binding WirelessAutoRecoverEndpoint}" Margin="0,4" />
+                        <CheckBox Content="Uç nokta değişimini göster" IsChecked="{Binding WirelessShowEndpointChanges}" Margin="0,4" />
+                        <CheckBox Content="Mirror otomatik yeniden başlat" IsChecked="{Binding WirelessAutoRestartMirror}" Margin="0,4" />
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="Bildirimler" Style="{StaticResource NexusSectionHeader}" />
+                <Border Style="{StaticResource NexusCard}" Margin="0,0,0,24">
+                    <StackPanel>
+                        <CheckBox Content="Bildirimleri etkinleştir" IsChecked="{Binding NotificationsEnabled}" />
+                        <StackPanel Margin="20,8,0,0" IsEnabled="{Binding NotificationsEnabled}">
+                            <CheckBox Content="Cihaz bağlandığında bildir" IsChecked="{Binding NotifyOnDeviceConnect}" Margin="0,4" />
+                            <CheckBox Content="Transfer tamamlandığında bildir" IsChecked="{Binding NotifyOnTransferComplete}" Margin="0,4" />
+                            <CheckBox Content="Yedek tamamlandığında bildir" IsChecked="{Binding NotifyOnBackupComplete}" Margin="0,4" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StatusBar Grid.Row="2">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusMessage}"
+                           Foreground="{DynamicResource Nexus.TextPrimary}" />
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</UserControl>

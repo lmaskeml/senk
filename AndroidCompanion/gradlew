@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# Minimal Unix wrapper (optional; Windows uses gradlew.bat)
+DIR="$(cd "$(dirname "$0")" && pwd)"
+exec java -classpath "$DIR/gradle/wrapper/gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain "$@"

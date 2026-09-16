@@ -1,0 +1,120 @@
+SeND ANDROID MANAGER  1.0.0
+Bilgilendirme ve Kullanım Kılavuzu
+============================================================
+
+Bu belge kurulum sihirbazında, Başlat menüsünde ve program
+klasöründe (KURULUM-VE-KULLANIM.txt) bulunur.
+
+
+1. Bu program nedir?
+------------------------------------------------------------
+SeND ANDROID MANAGER, telefonunuzu USB veya Wi-Fi üzerinden
+bilgisayardan yönetmeniz için hazırlanmış bir masaüstü
+uygulamasıdır.
+
+Dosya kopyalama, uygulama yükleme/kaldırma, galeri, yedekleme,
+ekran yansıtma ve gelişmiş bakım işlemleri tek pencereden
+yürütülür.
+
+Gerekli ADB, fastboot ve yansıtma araçları kurulumun içindedir.
+Ayrı bir Android SDK kurmanız gerekmez.
+
+
+2. Sistem gereksinimleri
+------------------------------------------------------------
+- Windows 10 veya Windows 11 (64-bit)
+- .NET 10 Desktop Runtime (x64)
+  İndirme: https://aka.ms/dotnet/10.0/windowsdesktop-runtime-win-x64.exe
+- USB kablosu (ilk bağlantı için)
+- Kurulum için yönetici izni
+
+
+3. Kurulum ve kullanım (çok basit!)
+------------------------------------------------------------
+Programı kullanmak için hiçbir teknik bilgiye ihtiyacınız yoktur.
+Her şey tek bir kurulum dosyasının içinde hazır gelir
+(gerekli ADB ve yansıtma araçları dahildir).
+
+--- Adım 1: Bilgisayara kurulum ---
+1. İndirmeler bölümünden AndroidManager_Kurulum.exe dosyasını
+   indirin.
+2. Çift tıklayıp çalıştırın ve standart kurulumu
+   (İleri > İleri > Kur) tamamlayın.
+3. Kurulum bittiğinde program bilgisayarınıza yüklenmiş olacak.
+
+--- Adım 2: Telefon ayarları (sadece bir kere yapılır) ---
+Uygulamanın telefonunuzu görebilmesi için "USB Hata Ayıklama"
+açık olmalıdır:
+
+1. Telefonunuzda Ayarlar > Telefon Hakkında menüsüne girin.
+2. Derleme Numarası yazan yere art arda 7 kez hızlıca dokunun
+   (ekranda "Artık geliştiricisiniz" yazar).
+3. Geri çıkıp Ayarlar > Sistem > Geliştirici Seçenekleri
+   menüsüne girin.
+   Xiaomi / Redmi / POCO: Ayarlar > Ek ayarlar > Geliştirici
+   seçenekleri
+   Samsung: Ayarlar > Telefon hakkında > Yazılım bilgisi >
+   Yapı numarası (7 kez)
+4. USB Hata Ayıklama seçeneğini bulup Açık konuma getirin.
+
+--- Adım 3: Telefonu bağlayın ---
+1. Telefonunuzu USB kablosuyla bilgisayara bağlayın.
+2. Masaüstündeki Android Manager kısayolundan programı açın.
+3. Telefon ekranınıza "USB Hata Ayıklamasına İzin Verilsin mi?"
+   uyarısı gelecektir. "Her zaman izin ver" kutucuğunu
+   işaretleyip Tamam'a basın. Hepsi bu kadar!
+
+
+4. Kablosuz kullanım ve Companion uygulaması (isteğe bağlı)
+------------------------------------------------------------
+Programı kurduğunuzda bilgisayarınızın masaüstüne
+AM_Companion_Kurulum.apk adında bir dosya çıkarıldığını
+göreceksiniz.
+
+Telefonunuzu kablo olmadan, Wi-Fi üzerinden yönetmek isterseniz:
+
+1. Bu APK dosyasını telefonunuza atın ve kurun.
+   (Telefonda "bilinmeyen kaynaklardan uygulama" izni
+   istenebilir — yalnızca bu APK için onaylayın.)
+2. Telefonunuzla bilgisayarınızın aynı Wi-Fi ağına bağlı
+   olduğundan emin olun.
+3. Telefondaki uygulamayı açın ve ekrandaki eşleştirme koduyla
+   bilgisayardaki programa anında kablosuz bağlanın.
+
+USB kablosu her zaman çalışır. Companion yalnızca kablosuz
+kolaylık içindir.
+
+
+5. Sık karşılaşılan durumlar
+------------------------------------------------------------
+Program cihazı görmüyor
+  - Kablayı çıkarıp takın; mümkünse orijinal veya veri
+    destekli kablo kullanın.
+  - Telefondaki USB bildirimine dokunup "Dosya aktarımı / MTP"
+    seçin.
+  - USB hata ayıklama iznini yeniden onaylayın.
+
+"USB hata ayıklamasına izin ver" penceresi gelmiyor
+  - Geliştirici seçeneklerinin açık olduğunu kontrol edin.
+  - Başka bir USB portu deneyin.
+  - Programı kapatıp tekrar açın.
+
+Kablosuz bağlanmıyor
+  - Telefon ve PC aynı Wi-Fi ağında olmalı (misafir ağ / AP
+    izolasyonu kablosuz ADB'yi keser).
+  - Companion APK'nin güncel sürümünü masaüstündeki dosyadan
+    kurun.
+
+Kaldırma
+  - Windows Ayarlar > Uygulamalar veya Başlat menüsündeki
+    "SeND ANDROID MANAGER'ı Kaldır" kısayolu.
+
+
+6. Destek notu
+------------------------------------------------------------
+ROM yükleme, recovery ve root işlemleri cihazınıza kalıcı
+değişiklik yapabilir. Bu adımları uygulamadan önce yedek alın.
+Bootloader kilidi ve üretici politikaları modele göre değişir.
+
+Sürüm: 1.0.0
+Yayıncı: SeND

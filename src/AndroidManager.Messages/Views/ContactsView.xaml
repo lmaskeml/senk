@@ -1,0 +1,202 @@
+<UserControl x:Class="AndroidManager.Messages.Views.ContactsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="1100"
+             Background="{DynamicResource Nexus.Background}">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="{DynamicResource Nexus.SurfaceElevated}" BorderBrush="{DynamicResource Nexus.Border}" BorderThickness="0,0,0,1" Padding="16,12">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Command="{Binding ImportVcfCommand}" Style="{StaticResource NexusTertiaryButton}" Margin="0,0,6,0" ToolTip="VCF içe aktar">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="FileImport" Margin="0,0,4,0" />
+                            <TextBlock Text="İçe aktar" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding ExportVcfCommand}" Style="{StaticResource NexusTertiaryButton}" Margin="0,0,6,0" ToolTip="VCF dışa aktar">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="CardAccountDetails" Margin="0,0,4,0" />
+                            <TextBlock Text="VCF" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding ExportJsonCommand}" Style="{StaticResource NexusTertiaryButton}" Margin="0,0,6,0" ToolTip="JSON">
+                        <TextBlock Text="JSON" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Command="{Binding ExportCsvCommand}" Style="{StaticResource NexusTertiaryButton}" Margin="0,0,6,0" ToolTip="CSV">
+                        <TextBlock Text="CSV" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Command="{Binding ExportExcelCommand}" Style="{StaticResource NexusTertiaryButton}" Margin="0,0,6,0" ToolTip="Excel (.xls)">
+                        <TextBlock Text="Excel" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Command="{Binding NewContactCommand}" Style="{StaticResource NexusSecondaryButton}" Margin="0,0,6,0">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="AccountPlus" Margin="0,0,4,0" />
+                            <TextBlock Text="Yeni" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding RefreshCommand}" Style="{StaticResource NexusPrimaryButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="Refresh" Margin="0,0,4,0" />
+                            <TextBlock Text="Yenile" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Kişiler" Style="{StaticResource Nexus.Text.H1}" />
+                    <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource Nexus.TextSecondary}" FontSize="12" Margin="0,4,0,0" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="360" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" BorderBrush="{DynamicResource Nexus.Border}" BorderThickness="0,0,1,0" Background="{DynamicResource Nexus.Surface}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" Margin="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 md:HintAssist.Hint="İsim veya numara ara"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Return" Command="{Binding SearchCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <Button Grid.Column="1" Margin="8,0,0,0" Padding="10,0"
+                                Command="{Binding SearchCommand}" ToolTip="Ara">
+                            <md:PackIcon Kind="Magnify" />
+                        </Button>
+                    </Grid>
+                    <ListBox Grid.Row="1"
+                             ItemsSource="{Binding Items}"
+                             SelectedItem="{Binding SelectedContact}"
+                             BorderThickness="0"
+                             Background="Transparent">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel Margin="10,8">
+                                    <Border DockPanel.Dock="Left" Width="36" Height="36" CornerRadius="18"
+                                            Background="{DynamicResource Nexus.Primary}" Margin="0,0,10,0">
+                                        <TextBlock Text="{Binding Initials}" Foreground="White"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   FontWeight="SemiBold" FontSize="12" />
+                                    </Border>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding PrimaryLine}" Foreground="{DynamicResource Nexus.TextSecondary}" FontSize="12"
+                                                   TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Column="1" Margin="24">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Kişi detayı" Style="{StaticResource Nexus.Text.H2}" Margin="0,0,0,12" />
+
+                <StackPanel Grid.Row="1">
+                    <TextBox Text="{Binding EditName, UpdateSourceTrigger=PropertyChanged}"
+                             md:HintAssist.Hint="Ad soyad"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             IsEnabled="{Binding IsEditing}"
+                             Margin="0,0,0,12" />
+                    <TextBox Text="{Binding EditPhone, UpdateSourceTrigger=PropertyChanged}"
+                             md:HintAssist.Hint="Telefon"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             IsEnabled="{Binding IsEditing}"
+                             Margin="0,0,0,12" />
+                    <TextBox Text="{Binding EditEmail, UpdateSourceTrigger=PropertyChanged}"
+                             md:HintAssist.Hint="E-posta"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             IsEnabled="{Binding IsEditing}"
+                             Margin="0,0,0,16" />
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Command="{Binding BeginEditCommand}" Padding="12,6" Margin="0,0,8,0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="Pencil" Margin="0,0,4,0" />
+                                <TextBlock Text="Düzenle" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding SaveCommand}" Style="{StaticResource NexusPrimaryButton}" Margin="0,0,8,0"
+                                Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="ContentSave" Margin="0,0,4,0" />
+                                <TextBlock Text="Kaydet" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding CancelEditCommand}" Padding="12,6" Margin="0,0,8,0"
+                                Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="Vazgeç" />
+                        </Button>
+                        <Button Command="{Binding SendSmsCommand}" Padding="12,6" Margin="0,0,8,0"
+                                ToolTip="Seçili kişiye SMS gönder">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="MessageText" Margin="0,0,4,0" />
+                                <TextBlock Text="SMS gönder" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding DeleteCommand}" Padding="12,6"
+                                Foreground="{DynamicResource Nexus.Danger}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="Delete" Margin="0,0,4,0" />
+                                <TextBlock Text="Sil" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+
+                <TextBlock Grid.Row="2" Margin="0,24,0,0" Foreground="{DynamicResource Nexus.TextMuted}" FontSize="12" TextWrapping="Wrap"
+                           Text="ADB ile rehber okuma/yazma bazı cihazlarda kısıtlıdır. İçe/dışa aktarma için VCF kullanın; CSV/JSON/Excel yedek için uygundur." />
+            </Grid>
+        </Grid>
+
+        <Border Grid.Row="0" Grid.RowSpan="2" Background="{DynamicResource Nexus.Surface}" Opacity="0.7"
+                Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}">
+            <ProgressBar IsIndeterminate="True" Width="200" Height="4" VerticalAlignment="Center" />
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,195 @@
+<UserControl x:Class="AndroidManager.Mirror.Views.MirrorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:c="clr-namespace:AndroidManager.Mirror.Converters"
+             xmlns:models="clr-namespace:AndroidManager.Core.Models;assembly=AndroidManager.Core"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="1100"
+             Background="{DynamicResource Nexus.Background}">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <c:InverseBooleanConverter x:Key="InvertBool" />
+        <c:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVis" />
+        <c:NullToVisibilityConverter x:Key="NullToVis" />
+        <c:NullToVisibilityConverter x:Key="NotNullToVis" Invert="True" />
+        <c:BoolToRecordIconConverter x:Key="BoolToRecordIcon" />
+        <c:BoolToRecordTextConverter x:Key="BoolToRecordText" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto"
+                      Background="{DynamicResource Nexus.Background}">
+            <StackPanel Margin="12">
+                <TextBlock Text="Ekran Yansıtma" Style="{StaticResource Nexus.Text.H1}" Margin="0,0,0,12" />
+
+                <Border Style="{StaticResource NexusCard}" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="Mod" Style="{StaticResource Nexus.Text.H3}" Margin="0,0,0,8" />
+                        <RadioButton Content="scrcpy (önerilen)"
+                                     IsChecked="{Binding IsScrcpyMode}"
+                                     IsEnabled="{Binding IsScrcpyAvailable}"
+                                     GroupName="MirrorMode" />
+                        <RadioButton Content="Screencap (yavaş)"
+                                     IsChecked="{Binding IsScrcpyMode, Converter={StaticResource InvertBool}}"
+                                     GroupName="MirrorMode"
+                                     Margin="0,6,0,0" />
+                        <Border Background="{DynamicResource Nexus.PrimarySubtle}" Padding="8" Margin="0,8,0,0" CornerRadius="4"
+                                Visibility="{Binding IsScrcpyAvailable, Converter={StaticResource InverseBoolToVis}}">
+                            <TextBlock TextWrapping="Wrap" FontSize="11"
+                                       Foreground="{DynamicResource Nexus.Warning}">
+                                <Run Text="scrcpy bulunamadı veya eksik paket." />
+                                <LineBreak />
+                                <Run Text="tools/scrcpy klasörüne tam paketi kopyalayın veya Ayarlar → scrcpy yolu." />
+                                <LineBreak />
+                                <Run Text="winget install Genymobile.scrcpy" />
+                            </TextBlock>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource NexusCard}" Margin="0,0,0,12"
+                        Visibility="{Binding IsScrcpyMode, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <TextBlock Text="scrcpy Ayarları" Style="{StaticResource Nexus.Text.H3}" Margin="0,0,0,8" />
+                        <TextBlock Text="{Binding MaxFps, StringFormat=Max FPS: {0}}" />
+                        <Slider Value="{Binding MaxFps}" Minimum="15" Maximum="120" TickFrequency="15" IsSnapToTickEnabled="True" />
+                        <TextBlock Margin="0,8,0,0" Text="{Binding BitRate, StringFormat=Bit Rate: {0} Mbps}" />
+                        <Slider Value="{Binding BitRate}" Minimum="1" Maximum="20" TickFrequency="1" IsSnapToTickEnabled="True" />
+                        <TextBlock Margin="0,8,0,0" Text="{Binding MaxSize, StringFormat=Max Size: {0}p}" />
+                        <Slider Value="{Binding MaxSize}" Minimum="480" Maximum="2160" TickFrequency="120" IsSnapToTickEnabled="True" />
+                        <CheckBox Content="Ekranı açık tut" IsChecked="{Binding StayAwake}" Margin="0,8,0,0" />
+                        <CheckBox Content="Dokunmaları göster" IsChecked="{Binding ShowTouches}" Margin="0,4,0,0" />
+                        <CheckBox Content="Salt okunur" IsChecked="{Binding NoControl}" Margin="0,4,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource NexusCard}" Margin="0,0,0,12"
+                        Visibility="{Binding IsScrcpyMode, Converter={StaticResource InverseBoolToVis}}">
+                    <StackPanel>
+                        <TextBlock Text="Screencap Ayarları" Style="{StaticResource Nexus.Text.H3}" Margin="0,0,0,8" />
+                        <TextBlock Text="{Binding ScreencapFps, StringFormat=FPS: {0}}" />
+                        <Slider Value="{Binding ScreencapFps}" Minimum="1" Maximum="30" TickFrequency="1" IsSnapToTickEnabled="True" />
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource NexusCard}" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="Cihaz Kontrolleri" Style="{StaticResource Nexus.Text.H3}" Margin="0,0,0,8" />
+                        <UniformGrid Columns="3">
+                            <Button Margin="2" Command="{Binding SendKeyCommand}" CommandParameter="{x:Static models:AndroidKeyCode.Back}" ToolTip="Geri">
+                                <md:PackIcon Kind="ArrowLeft" />
+                            </Button>
+                            <Button Margin="2" Command="{Binding SendKeyCommand}" CommandParameter="{x:Static models:AndroidKeyCode.Home}" ToolTip="Ana Sayfa">
+                                <md:PackIcon Kind="Home" />
+                            </Button>
+                            <Button Margin="2" Command="{Binding SendKeyCommand}" CommandParameter="{x:Static models:AndroidKeyCode.RecentApps}" ToolTip="Son Uygulamalar">
+                                <md:PackIcon Kind="ViewGrid" />
+                            </Button>
+                        </UniformGrid>
+                        <UniformGrid Columns="2" Margin="0,8,0,0">
+                            <Button Margin="2" Command="{Binding SendKeyCommand}" CommandParameter="{x:Static models:AndroidKeyCode.VolumeUp}">
+                                <md:PackIcon Kind="VolumeHigh" />
+                            </Button>
+                            <Button Margin="2" Command="{Binding SendKeyCommand}" CommandParameter="{x:Static models:AndroidKeyCode.VolumeDown}">
+                                <md:PackIcon Kind="VolumeLow" />
+                            </Button>
+                        </UniformGrid>
+                        <UniformGrid Columns="2" Margin="0,8,0,0">
+                            <Button Margin="2" Command="{Binding SendKeyCommand}" CommandParameter="{x:Static models:AndroidKeyCode.Power}">
+                                <md:PackIcon Kind="Power" />
+                            </Button>
+                            <Button Margin="2" Command="{Binding TakeScreenshotCommand}">
+                                <md:PackIcon Kind="CameraOutline" />
+                            </Button>
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource NexusCard}">
+                    <StackPanel>
+                        <TextBlock Text="Ekran Kaydı" Style="{StaticResource Nexus.Text.H3}" Margin="0,0,0,8" />
+                        <Button Command="{Binding ToggleRecordCommand}" Style="{StaticResource NexusSecondaryButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="{Binding IsRecording, Converter={StaticResource BoolToRecordIcon}}" Margin="0,0,6,0" />
+                                <TextBlock Text="{Binding IsRecording, Converter={StaticResource BoolToRecordText}}" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text="{Binding RecordPath}" FontSize="11" TextWrapping="Wrap" Margin="0,6,0,0"
+                                   Foreground="{DynamicResource Nexus.TextMuted}"
+                                   Visibility="{Binding RecordPath, Converter={StaticResource NotNullToVis}}" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Column="1" Background="{DynamicResource Nexus.SurfaceElevated}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <ToolBar Grid.Row="0" Background="{DynamicResource Nexus.Surface}">
+                <Button Command="{Binding StartMirrorCommand}"
+                        IsEnabled="{Binding IsStreaming, Converter={StaticResource InvertBool}}"
+                        Foreground="{DynamicResource Nexus.Success}">
+                    <StackPanel Orientation="Horizontal">
+                        <md:PackIcon Kind="Play" Margin="0,0,4,0" />
+                        <TextBlock Text="Başlat" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding StopMirrorCommand}"
+                        IsEnabled="{Binding IsStreaming}"
+                        Foreground="{DynamicResource Nexus.Danger}">
+                    <StackPanel Orientation="Horizontal">
+                        <md:PackIcon Kind="Stop" Margin="0,0,4,0" />
+                        <TextBlock Text="Durdur" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </ToolBar>
+
+            <Grid Grid.Row="1">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Visibility="{Binding CurrentFrame, Converter={StaticResource NullToVis}}">
+                    <md:PackIcon Kind="Cellphone" Width="64" Height="64"
+                                 Foreground="{DynamicResource Nexus.TextMuted}"
+                                 HorizontalAlignment="Center" />
+                    <TextBlock Text="Yansıtma başlatılmadı"
+                               Foreground="{DynamicResource Nexus.TextMuted}"
+                               Margin="0,8,0,0" HorizontalAlignment="Center" />
+                    <TextBlock Text="scrcpy ayrı pencere açar; screencap burada akar"
+                               Foreground="{DynamicResource Nexus.TextSecondary}"
+                               FontSize="12" HorizontalAlignment="Center" />
+                </StackPanel>
+
+                <Image x:Name="MirrorImage"
+                       Source="{Binding CurrentFrame}"
+                       Stretch="Uniform"
+                       MouseLeftButtonUp="MirrorImage_OnMouseLeftButtonUp"
+                       Visibility="{Binding CurrentFrame, Converter={StaticResource NotNullToVis}}" />
+
+                <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12"
+                        Background="{DynamicResource Nexus.Danger}" CornerRadius="4" Padding="8,4"
+                        Visibility="{Binding IsRecording, Converter={StaticResource BoolToVis}}">
+                    <TextBlock Text="REC" Foreground="White" FontWeight="Bold" FontSize="11" />
+                </Border>
+            </Grid>
+
+            <StatusBar Grid.Row="2" Background="{DynamicResource Nexus.Surface}">
+                <StatusBarItem>
+                    <TextBlock Text="{Binding StatusMessage}"
+                               Foreground="{DynamicResource Nexus.TextSecondary}" />
+                </StatusBarItem>
+            </StatusBar>
+        </Grid>
+    </Grid>
+</UserControl>

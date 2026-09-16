@@ -1,0 +1,180 @@
+<UserControl x:Class="AndroidManager.Security.Views.ResidueCleanerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:c="clr-namespace:AndroidManager.Security.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="720" d:DesignWidth="960"
+             Background="{DynamicResource Nexus.Background}">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <c:InverseBooleanConverter x:Key="InvertBool" />
+        <c:InverseBooleanToVisibilityConverter x:Key="InvertBoolToVis" />
+        <c:NonZeroToVisibilityConverter x:Key="NonZeroToVis" />
+    </UserControl.Resources>
+
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Style="{StaticResource NexusCard}" Margin="0,0,0,8">
+            <StackPanel>
+                <TextBlock Text="Kalıntı Temizleme" Style="{StaticResource Nexus.Text.H2}" />
+                <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource Nexus.TextSecondary}" FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap" />
+                <TextBlock Margin="0,6,0,0" FontSize="11" Foreground="{DynamicResource Nexus.TextMuted}" TextWrapping="Wrap">
+                    <Run Text="pm uninstall -k sonrası kalan /data/data verileri, APK dizinleri, önbellek ve log kalıntıları." />
+                    <LineBreak />
+                    <Run Text="Root Modu temizliğini tamamlar — önce Root'ta kaldır, burada kalıntıları sil." />
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <TabControl Grid.Row="1" Margin="0,0,0,8">
+            <TabItem Header="Tarama">
+                <StackPanel Margin="8">
+                    <UniformGrid Columns="3" Margin="0,0,0,8">
+                        <CheckBox Content="Yetim veri" IsChecked="{Binding ScanOrphaned}" Margin="4" />
+                        <CheckBox Content="APK kalıntısı" IsChecked="{Binding ScanApks}" Margin="4" />
+                        <CheckBox Content="Önbellek" IsChecked="{Binding ScanCaches}" Margin="4" />
+                        <CheckBox Content="Geçici dosya" IsChecked="{Binding ScanTemp}" Margin="4" />
+                        <CheckBox Content="Log" IsChecked="{Binding ScanLogs}" Margin="4" />
+                        <CheckBox Content="Boş dizin" IsChecked="{Binding ScanEmpty}" Margin="4" />
+                        <CheckBox Content="Thumbnail" IsChecked="{Binding ScanThumbs}" Margin="4" />
+                        <CheckBox Content="Download" IsChecked="{Binding ScanDownload}" Margin="4" />
+                        <CheckBox Content="Derin (Dalvik)" IsChecked="{Binding DeepScan}" Margin="4" />
+                    </UniformGrid>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Command="{Binding ScanCommand}" Style="{StaticResource NexusPrimaryButton}" Margin="0,0,8,0"
+                                IsEnabled="{Binding IsScanning, Converter={StaticResource InvertBool}}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="Magnify" Margin="0,0,6,0" />
+                                <TextBlock Text="Kalıntı tara" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding CancelScanCommand}" Padding="14,8" Margin="0,0,8,0"
+                                Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="İptal" />
+                        </Button>
+                        <Button Command="{Binding TrimCachesCommand}" Padding="14,8"
+                                IsEnabled="{Binding IsCleaning, Converter={StaticResource InvertBool}}"
+                                ToolTip="pm trim-caches (root gerekmez)">
+                            <TextBlock Text="Sistem önbelleği" />
+                        </Button>
+                    </StackPanel>
+                    <ProgressBar Margin="0,10,0,0" Height="4" Maximum="100"
+                                 Value="{Binding ScanPercent}"
+                                 Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}}" />
+                    <TextBlock Text="{Binding ScanPhase}" FontSize="11" Foreground="{DynamicResource Nexus.TextMuted}" Margin="0,4,0,0"
+                               Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}}" />
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Beyaz liste">
+                <StackPanel Margin="8">
+                    <TextBlock Text="Bu paketlerin verisi asla işaretlenmez." FontSize="11" Foreground="{DynamicResource Nexus.TextSecondary}" Margin="0,0,0,8" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Text="{Binding WhitelistInput, UpdateSourceTrigger=PropertyChanged}"
+                                 md:HintAssist.Hint="com.ornek.uygulama"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+                        <Button Grid.Column="1" Margin="8,0,0,0" Content="Ekle" Command="{Binding AddWhitelistCommand}" />
+                    </Grid>
+                    <ItemsControl ItemsSource="{Binding Whitelist}" Margin="0,12,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel Margin="0,4">
+                                    <Button DockPanel.Dock="Right" Content="Kaldır" Padding="8,2"
+                                            Command="{Binding DataContext.RemoveWhitelistCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}" />
+                                    <TextBlock Text="{Binding}" VerticalAlignment="Center" FontFamily="Consolas" />
+                                </DockPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+
+        <Grid Grid.Row="2">
+            <TextBlock Text="Kalıntı bulunamadı — tarama başlatın."
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Foreground="{DynamicResource Nexus.TextMuted}"
+                       Visibility="{Binding HasItems, Converter={StaticResource InvertBoolToVis}}" />
+
+            <ListView ItemsSource="{Binding Items}"
+                      BorderThickness="0"
+                      Visibility="{Binding HasItems, Converter={StaticResource BoolToVis}}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="40">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding IsSelected}" HorizontalAlignment="Center" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Kategori" Width="120" DisplayMemberBinding="{Binding CategoryLabel}" />
+                        <GridViewColumn Header="Ad" Width="160" DisplayMemberBinding="{Binding Name}" />
+                        <GridViewColumn Header="Boyut" Width="80" DisplayMemberBinding="{Binding SizeLabel}" />
+                        <GridViewColumn Header="Yol" Width="280">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path}" TextTrimming="CharacterEllipsis"
+                                               ToolTip="{Binding Path}" FontSize="11" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="" Width="70">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Sil" Padding="6,2"
+                                            Command="{Binding DataContext.CleanItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+
+        <Border Grid.Row="3" Padding="12,8" Margin="0,8,0,0" Background="{DynamicResource Nexus.SurfaceElevated}" CornerRadius="4">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Command="{Binding SelectAllCommand}" Content="Tümünü seç" Padding="10,6" Margin="0,0,6,0"
+                            IsEnabled="{Binding IsCleaning, Converter={StaticResource InvertBool}}" />
+                    <Button Command="{Binding ClearSelectionCommand}" Content="Seçimi kaldır" Padding="10,6" Margin="0,0,6,0" />
+                    <Button Command="{Binding CleanSelectedCommand}" Padding="12,6"
+                            Style="{StaticResource NexusPrimaryButton}"
+                            IsEnabled="{Binding IsCleaning, Converter={StaticResource InvertBool}}">
+                        <TextBlock Text="Seçilenleri temizle" />
+                    </Button>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="{Binding SummaryText}" FontWeight="SemiBold" FontSize="12" />
+                    <TextBlock FontSize="11" Foreground="{DynamicResource Nexus.TextSecondary}">
+                        <Run Text="Seçili: " />
+                        <Run Text="{Binding SelectedCount, Mode=OneWay}" />
+                        <Run Text=" (" />
+                        <Run Text="{Binding SelectedSizeText, Mode=OneWay}" />
+                        <Run Text=")" />
+                    </TextBlock>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Row="0" Grid.RowSpan="4" Background="{DynamicResource Nexus.Surface}" Opacity="0.7"
+                Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}}">
+            <ProgressBar IsIndeterminate="True" Width="200" Height="4" VerticalAlignment="Center" />
+        </Border>
+    </Grid>
+</UserControl>

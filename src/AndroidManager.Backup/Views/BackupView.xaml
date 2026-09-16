@@ -1,0 +1,314 @@
+<UserControl x:Class="AndroidManager.Backup.Views.BackupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vm="clr-namespace:AndroidManager.Backup.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="1000"
+             Background="{DynamicResource Nexus.Background}">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <vm:InverseBooleanConverter x:Key="InvertBool" />
+        <vm:InverseBooleanToVisibilityConverter x:Key="InvertBoolToVis" />
+        <vm:NullToVisibilityConverter x:Key="NotNullToVis" Invert="True" />
+    </UserControl.Resources>
+
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TabControl SelectedIndex="{Binding ActiveTab}">
+            <TabItem Header="Yedekle">
+                <ScrollViewer Style="{StaticResource NexusPageScroll}" VerticalScrollBarVisibility="Auto">
+                    <StackPanel MaxWidth="640">
+                        <TextBlock Text="Yedekleme Oluştur" Style="{StaticResource Nexus.Text.H1}" Margin="0,0,0,16" />
+
+                        <Border Style="{StaticResource NexusCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="Yedeklenecekler" Style="{StaticResource Nexus.Text.H3}" Margin="0,0,0,8" />
+                                <CheckBox Content="SMS Mesajları" IsChecked="{Binding BackupSms}" Margin="0,4" />
+                                <CheckBox Content="Rehber (Kişiler)" IsChecked="{Binding BackupContacts}" Margin="0,4" />
+                                <CheckBox Content="Fotoğraflar (Galeri/MediaStore)" IsChecked="{Binding BackupPhotos}" Margin="0,4" />
+                                <CheckBox Content="Videolar (Galeri/MediaStore)" IsChecked="{Binding BackupVideos}" Margin="0,4" />
+                                <CheckBox Content="Uygulamalar (APK)" IsChecked="{Binding BackupApps}" Margin="0,4" />
+                                <CheckBox Content="Oyun / uygulama verisi (kayıtlar, root)"
+                                          IsChecked="{Binding BackupAppData}"
+                                          Margin="0,4" />
+                                <TextBlock Text="{Binding AppDataHint}"
+                                           Style="{StaticResource Nexus.Text.Caption}"
+                                           TextWrapping="Wrap"
+                                           Opacity="0.85"
+                                           Margin="24,0,0,4" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource NexusCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="Kayıt Ayarları" Style="{StaticResource Nexus.Text.H3}" Margin="0,0,0,8" />
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Text="{Binding SavePath}" IsReadOnly="True"
+                                             md:HintAssist.Hint="Kayıt klasörü"
+                                             Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+                                    <Button Grid.Column="1" Margin="8,0,0,0"
+                                            Command="{Binding BrowseSavePathCommand}"
+                                            Style="{StaticResource MaterialDesignIconButton}">
+                                        <md:PackIcon Kind="FolderOpen" />
+                                    </Button>
+                                </Grid>
+                                <TextBox Text="{Binding Note}"
+                                         md:HintAssist.Hint="Not (opsiyonel)"
+                                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                         Margin="0,0,0,8" />
+                                <CheckBox Content="ZIP ile sıkıştır" IsChecked="{Binding Compress}" />
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding StartBackupCommand}"
+                                    IsEnabled="{Binding IsRunning, Converter={StaticResource InvertBool}}"
+                                    Style="{StaticResource NexusPrimaryButton}">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Backup" Margin="0,0,8,0" />
+                                    <TextBlock Text="Yedeklemeyi Başlat" />
+                                </StackPanel>
+                            </Button>
+                            <Button Command="{Binding CancelBackupCommand}"
+                                    IsEnabled="{Binding IsRunning}"
+                                    Style="{StaticResource NexusSecondaryButton}"
+                                    Margin="12,0,0,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Cancel" Margin="0,0,8,0" />
+                                    <TextBlock Text="İptal" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Geri Yükle">
+                <ScrollViewer Style="{StaticResource NexusPageScroll}" VerticalScrollBarVisibility="Auto">
+                    <StackPanel MaxWidth="920">
+                        <TextBlock Text="Yedekten Geri Yükle" Style="{StaticResource Nexus.Text.H1}" Margin="0,0,0,16" />
+
+                        <Border Style="{StaticResource NexusCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="Yedek Dosyası" Style="{StaticResource Nexus.Text.H3}" Margin="0,0,0,8" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Text="{Binding SelectedBackupFile}" IsReadOnly="True"
+                                             md:HintAssist.Hint="Yedek dosyası (.zip)"
+                                             Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+                                    <Button Grid.Column="1" Margin="8,0,0,0"
+                                            Command="{Binding BrowseBackupFileCommand}"
+                                            Style="{StaticResource MaterialDesignIconButton}">
+                                        <md:PackIcon Kind="FileSearch" />
+                                    </Button>
+                                </Grid>
+                                <TextBlock Text="{Binding RestoreCatalogStatus}"
+                                           Style="{StaticResource Nexus.Text.Caption}"
+                                           TextWrapping="Wrap"
+                                           Margin="0,8,0,0"
+                                           Opacity="0.85" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource NexusCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="Diğer öğeler" Style="{StaticResource Nexus.Text.H3}" Margin="0,0,0,8" />
+                                <CheckBox Content="SMS (root/companion gerekir)" IsChecked="{Binding RestoreSms}" Margin="0,4" />
+                                <CheckBox Content="Rehber" IsChecked="{Binding RestoreContacts}" Margin="0,4" />
+                                <CheckBox Content="Fotoğraflar" IsChecked="{Binding RestorePhotos}" Margin="0,4" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource NexusCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="Uygulamalar" Style="{StaticResource Nexus.Text.H3}" Margin="0,0,0,8" />
+                                <TextBlock Text="Listeden kurmak istediğiniz uygulamayı seçin. İşaretlenen paketin APK’sı ve (aşağıdaki kutu açıksa) verisi yüklenir. Sistem paketleri varsayılan olarak seçilmez."
+                                           Style="{StaticResource Nexus.Text.Caption}"
+                                           TextWrapping="Wrap"
+                                           Margin="0,0,0,8"
+                                           Opacity="0.9" />
+                                <CheckBox Content="Seçilen uygulamaları kur (APK)"
+                                          IsChecked="{Binding RestoreApps}"
+                                          Margin="0,4" />
+                                <CheckBox Content="Mevcut uygulamaların üzerine yaz"
+                                          IsChecked="{Binding OverwriteApps}"
+                                          IsEnabled="{Binding RestoreApps}"
+                                          Margin="20,4,0,0" />
+                                <CheckBox Content="Seçilenlerin uygulama / oyun verisini de yükle (root)"
+                                          IsChecked="{Binding RestoreAppData}"
+                                          Margin="0,4" />
+                                <TextBlock Text="{Binding RestoreDataHint}"
+                                           Style="{StaticResource Nexus.Text.Caption}"
+                                           TextWrapping="Wrap"
+                                           Opacity="0.85"
+                                           Margin="24,0,0,8" />
+
+                                <Grid Margin="0,4,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Text="{Binding RestoreAppFilter, UpdateSourceTrigger=PropertyChanged}"
+                                             md:HintAssist.Hint="Paket adı ara"
+                                             Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+                                    <CheckBox Grid.Column="1"
+                                              Content="Sistemi gizle"
+                                              IsChecked="{Binding HideSystemRestoreApps}"
+                                              VerticalAlignment="Center"
+                                              Margin="12,0,0,0" />
+                                </Grid>
+
+                                <WrapPanel Margin="0,0,0,8">
+                                    <Button Content="Tümü" Command="{Binding SelectAllRestoreAppsCommand}"
+                                            Style="{StaticResource NexusSecondaryButton}" Margin="0,0,8,4" Padding="10,4" />
+                                    <Button Content="Kullanıcı" Command="{Binding SelectUserRestoreAppsCommand}"
+                                            Style="{StaticResource NexusSecondaryButton}" Margin="0,0,8,4" Padding="10,4" />
+                                    <Button Content="Verisi olanlar" Command="{Binding SelectRestoreAppsWithDataCommand}"
+                                            Style="{StaticResource NexusSecondaryButton}" Margin="0,0,8,4" Padding="10,4" />
+                                    <Button Content="Hiçbiri" Command="{Binding ClearRestoreAppSelectionCommand}"
+                                            Style="{StaticResource NexusSecondaryButton}" Margin="0,0,8,4" Padding="10,4" />
+                                </WrapPanel>
+
+                                <TextBlock Text="Önce bir yedek seçin — uygulamalar burada listelenir."
+                                           Foreground="{DynamicResource Nexus.TextMuted}"
+                                           Margin="0,8"
+                                           Visibility="{Binding HasRestoreApps, Converter={StaticResource InvertBoolToVis}}" />
+
+                                <ListView ItemsSource="{Binding RestoreAppsView}"
+                                          Height="280"
+                                          BorderThickness="0"
+                                          Visibility="{Binding HasRestoreApps, Converter={StaticResource BoolToVis}}">
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Width="40">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <CheckBox IsChecked="{Binding IsSelected}" HorizontalAlignment="Center" />
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn Header="Paket" Width="320" DisplayMemberBinding="{Binding PackageName}" />
+                                            <GridViewColumn Header="İçerik" Width="140" DisplayMemberBinding="{Binding ContentsLabel}" />
+                                            <GridViewColumn Header="Boyut" Width="80" DisplayMemberBinding="{Binding SizeLabel}" />
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+
+                                <TextBlock Text="{Binding SelectedRestoreAppSummary}"
+                                           FontWeight="SemiBold"
+                                           FontSize="12"
+                                           Margin="0,8,0,0" />
+                            </StackPanel>
+                        </Border>
+
+                        <Button Command="{Binding StartRestoreCommand}"
+                                IsEnabled="{Binding IsRunning, Converter={StaticResource InvertBool}}"
+                                Style="{StaticResource NexusPrimaryButton}"
+                                HorizontalAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="Restore" Margin="0,0,8,0" />
+                                <TextBlock Text="Geri Yükle" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Geçmiş">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <ToolBar>
+                        <Button Command="{Binding LoadHistoryCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="Refresh" Margin="0,0,4,0" />
+                                <TextBlock Text="Yenile" />
+                            </StackPanel>
+                        </Button>
+                    </ToolBar>
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding History}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              HeadersVisibility="Column"
+                              Background="{DynamicResource Nexus.Surface}"
+                              BorderBrush="{DynamicResource Nexus.Border}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Durum" Binding="{Binding StatusIcon}" Width="60" />
+                            <DataGridTextColumn Header="Cihaz" Binding="{Binding DeviceModel}" Width="120" />
+                            <DataGridTextColumn Header="Kapsam" Binding="{Binding TypeLabel}" Width="160" />
+                            <DataGridTextColumn Header="Boyut" Binding="{Binding Size}" Width="80" />
+                            <DataGridTextColumn Header="Tarih" Binding="{Binding CreatedAt}" Width="130" />
+                            <DataGridTextColumn Header="Not" Binding="{Binding Note}" Width="*" />
+                            <DataGridTemplateColumn Header="" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Command="{Binding DataContext.OpenBackupFolderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{StaticResource MaterialDesignIconButton}"
+                                                    ToolTip="Klasörde göster">
+                                                <md:PackIcon Kind="FolderOpen" />
+                                            </Button>
+                                            <Button Command="{Binding DataContext.DeleteHistoryItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{StaticResource MaterialDesignIconButton}"
+                                                    ToolTip="Kaydı sil">
+                                                <md:PackIcon Kind="Delete" />
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Border Grid.Row="1" Padding="16,12"
+                Background="{DynamicResource Nexus.SurfaceElevated}"
+                BorderBrush="{DynamicResource Nexus.Border}"
+                BorderThickness="0,1,0,0"
+                Visibility="{Binding IsRunning, Converter={StaticResource BoolToVis}}">
+            <StackPanel>
+                <TextBlock Text="{Binding Progress.CurrentStep}" FontWeight="SemiBold" Margin="0,0,0,6" />
+                <ProgressBar Maximum="100" Height="8" Value="{Binding Progress.Percentage, Mode=OneWay}"
+                             Foreground="{DynamicResource Nexus.Primary}" />
+                <TextBlock Margin="0,4,0,0" FontSize="11" Foreground="{DynamicResource Nexus.TextSecondary}">
+                    <Run Text="{Binding Progress.ItemsDone, Mode=OneWay}" />
+                    <Run Text="/" />
+                    <Run Text="{Binding Progress.ItemsTotal, Mode=OneWay}" />
+                    <Run Text=" — " />
+                    <Run Text="{Binding Progress.Percentage, Mode=OneWay}" />
+                    <Run Text="%" />
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <StatusBar Grid.Row="2">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusMessage}" />
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</UserControl>

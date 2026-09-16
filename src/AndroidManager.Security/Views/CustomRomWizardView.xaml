@@ -1,0 +1,438 @@
+<UserControl x:Class="AndroidManager.Security.Views.CustomRomWizardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:c="clr-namespace:AndroidManager.Security.Converters"
+             mc:Ignorable="d"
+             Background="{DynamicResource Nexus.Background}"
+             d:DesignHeight="720" d:DesignWidth="960">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <c:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVis" />
+        <c:InverseBooleanConverter x:Key="InverseBool" />
+    </UserControl.Resources>
+    <Grid Style="{StaticResource NexusPageRoot}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Margin="24,20,24,0" LastChildFill="False">
+            <StackPanel DockPanel.Dock="Left">
+                <TextBlock Text="Custom ROM Sihirbazı" Style="{StaticResource Nexus.Text.H1}" />
+                <TextBlock Text="{Binding StatusMessage}"
+                           Style="{StaticResource Nexus.Text.Caption}"
+                           Margin="0,4,0,0"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Command="{Binding RefreshDeviceCommand}"
+                        Style="{StaticResource NexusSecondaryButton}"
+                        Margin="0,0,8,0">
+                    <StackPanel Orientation="Horizontal">
+                        <md:PackIcon Kind="Refresh" Width="16" Height="16" Margin="0,0,6,0"
+                                     VerticalAlignment="Center"
+                                     Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                        <TextBlock Text="Cihazı yenile" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ResetWizardCommand}"
+                        Style="{StaticResource NexusTertiaryButton}">
+                    <TextBlock Text="Sıfırla" VerticalAlignment="Center" />
+                </Button>
+            </StackPanel>
+        </DockPanel>
+
+        <ProgressBar Grid.Row="1" Height="3" IsIndeterminate="True" Margin="24,12,24,0"
+                     Foreground="{DynamicResource Nexus.Primary}"
+                     Background="Transparent" BorderThickness="0"
+                     Visibility="{Binding IsRefreshingDevice, Converter={StaticResource BoolToVis}}" />
+
+        <ScrollViewer Grid.Row="2" Style="{StaticResource NexusPageScroll}">
+            <StackPanel MaxWidth="720">
+                <UniformGrid Columns="3" Margin="0,0,0,16">
+                    <Border Style="{StaticResource NexusCard}" Margin="0,0,8,0"
+                            Background="{DynamicResource Nexus.PrimarySubtle}">
+                        <StackPanel>
+                            <TextBlock Text="1" Style="{StaticResource Nexus.Text.H2}" />
+                            <TextBlock Text="Cihaz ve dosya" Style="{StaticResource Nexus.Text.Caption}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource NexusCard}" Margin="4,0"
+                            Background="{DynamicResource Nexus.SurfaceElevated}">
+                        <StackPanel>
+                            <TextBlock Text="2" Style="{StaticResource Nexus.Text.H2}" />
+                            <TextBlock Text="Cihazı hazırla" Style="{StaticResource Nexus.Text.Caption}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource NexusCard}" Margin="8,0,0,0"
+                            Background="{DynamicResource Nexus.SurfaceElevated}">
+                        <StackPanel>
+                            <TextBlock Text="3" Style="{StaticResource Nexus.Text.H2}" />
+                            <TextBlock Text="Yükleme" Style="{StaticResource Nexus.Text.Caption}" />
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <!-- Step 1: package -->
+                <StackPanel Visibility="{Binding IsPackageStep, Converter={StaticResource BoolToVis}}">
+                    <Border Style="{StaticResource NexusCardElevated}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="CİHAZ"
+                                       Style="{StaticResource NexusSectionHeader}" />
+                            <TextBlock Text="{Binding DeviceDisplayName, Mode=OneWay}"
+                                       Style="{StaticResource Nexus.Text.H2}" />
+                            <WrapPanel Margin="0,12,0,0">
+                                <Border Style="{StaticResource NexusStatusBadge}" Margin="0,0,8,8"
+                                        Background="{DynamicResource Nexus.PrimarySubtle}">
+                                    <TextBlock Style="{StaticResource Nexus.Text.Caption}"
+                                               Foreground="{DynamicResource Nexus.TextPrimary}">
+                                        <Run Text="Kod adı: " Foreground="{DynamicResource Nexus.TextPrimary}" />
+                                        <Run Text="{Binding DeviceCodename, Mode=OneWay}"
+                                             Foreground="{DynamicResource Nexus.TextPrimary}" />
+                                    </TextBlock>
+                                </Border>
+                                <Border Style="{StaticResource NexusStatusBadge}" Margin="0,0,8,8"
+                                        Background="{DynamicResource Nexus.SurfaceElevated}">
+                                    <TextBlock Style="{StaticResource Nexus.Text.Caption}"
+                                               Foreground="{DynamicResource Nexus.TextPrimary}">
+                                        <Run Text="Recovery: " Foreground="{DynamicResource Nexus.TextPrimary}" />
+                                        <Run Text="{Binding RecoveryStatus.Label, FallbackValue=—, Mode=OneWay}"
+                                             Foreground="{DynamicResource Nexus.TextPrimary}" />
+                                    </TextBlock>
+                                </Border>
+                                <Border Style="{StaticResource NexusStatusBadge}" Margin="0,0,8,8"
+                                        Background="{DynamicResource Nexus.WarningSubtle}">
+                                    <TextBlock Style="{StaticResource Nexus.Text.Caption}"
+                                               Foreground="{DynamicResource Nexus.TextPrimary}">
+                                        <Run Text="Mod: " Foreground="{DynamicResource Nexus.TextPrimary}" />
+                                        <Run Text="{Binding ConnectionModeLabel, Mode=OneWay}"
+                                             Foreground="{DynamicResource Nexus.TextPrimary}" />
+                                    </TextBlock>
+                                </Border>
+                            </WrapPanel>
+                            <Button Command="{Binding RebootFastbootCommand}"
+                                    Style="{StaticResource NexusSecondaryButton}"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,8,0,0"
+                                    Content="Fastboot'a al" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource NexusCard}" Margin="0,0,0,16"
+                            MinHeight="140">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <md:PackIcon Kind="ZipBox" Width="36" Height="36"
+                                         HorizontalAlignment="Center"
+                                         Foreground="{DynamicResource Nexus.Primary}" />
+                            <TextBlock Text="Custom ROM .zip dosyasını buraya bırakın"
+                                       Style="{StaticResource Nexus.Text.H3}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,12,0,4" />
+                            <TextBlock Text="payload.bin varsa önerilen: güvenli fastboot yükleme (TWRP yok, ROM değişmez). Recovery zip'ler için TWRP sideload."
+                                       Style="{StaticResource Nexus.Text.Caption}"
+                                       HorizontalAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Center" />
+                            <Button Command="{Binding PickRomCommand}"
+                                    Style="{StaticResource NexusPrimaryButton}"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,16,0,0"
+                                    Content="ZIP seç" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource NexusCardElevated}" Margin="0,0,0,16"
+                            Visibility="{Binding HasPackage, Converter={StaticResource BoolToVis}}">
+                        <StackPanel>
+                            <TextBlock Text="{Binding Package.FileName}" Style="{StaticResource Nexus.Text.H2}" />
+                            <TextBlock Text="{Binding Package.Summary}"
+                                       Style="{StaticResource Nexus.Text.Body}"
+                                       Margin="0,6,0,0"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Margin="0,4,0,0" Style="{StaticResource Nexus.Text.Caption}">
+                                <Run Text="{Binding Package.SizeFormatted, Mode=OneWay}" />
+                                <Run Text=" · updater-script: " />
+                                <Run Text="{Binding Package.HasUpdaterScript, Mode=OneWay}" />
+                                <Run Text=" · payload.bin: " />
+                                <Run Text="{Binding Package.HasPayloadBin, Mode=OneWay}" />
+                            </TextBlock>
+
+                            <Border Margin="0,12,0,0" Padding="12"
+                                    CornerRadius="8"
+                                    Visibility="{Binding IsCompatible, Converter={StaticResource BoolToVis}}"
+                                    Background="{DynamicResource Nexus.SuccessSubtle}">
+                                <TextBlock Text="{Binding Compatibility.Reason}"
+                                           TextWrapping="Wrap"
+                                           Style="{StaticResource Nexus.Text.Body}"
+                                           Foreground="{DynamicResource Nexus.Success}" />
+                            </Border>
+                            <Border Margin="0,12,0,0" Padding="12"
+                                    CornerRadius="8"
+                                    Visibility="{Binding IsUnverifiable, Converter={StaticResource BoolToVis}}"
+                                    Background="{DynamicResource Nexus.WarningSubtle}">
+                                <TextBlock Text="{Binding Compatibility.Reason}"
+                                           TextWrapping="Wrap"
+                                           Style="{StaticResource Nexus.Text.Body}"
+                                           Foreground="{DynamicResource Nexus.Warning}" />
+                            </Border>
+                            <Border Margin="0,12,0,0" Padding="12"
+                                    CornerRadius="8"
+                                    Visibility="{Binding IsIncompatible, Converter={StaticResource BoolToVis}}"
+                                    Background="{DynamicResource Nexus.DangerSubtle}">
+                                <TextBlock Text="{Binding Compatibility.Reason}"
+                                           TextWrapping="Wrap"
+                                           Style="{StaticResource Nexus.Text.Body}"
+                                           Foreground="{DynamicResource Nexus.Danger}" />
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <Button Command="{Binding GoNextCommand}"
+                            Style="{StaticResource NexusPrimaryButton}"
+                            HorizontalAlignment="Right"
+                            Content="Devam" />
+                </StackPanel>
+
+                <!-- Step 2: prepare -->
+                <StackPanel Visibility="{Binding IsPrepareStep, Converter={StaticResource BoolToVis}}">
+                    <Border Style="{StaticResource NexusCardElevated}" Margin="0,0,0,16"
+                            Visibility="{Binding HasPayloadRom, Converter={StaticResource BoolToVis}}">
+                        <StackPanel>
+                            <TextBlock Text="YÜKLEME YÖNTEMİ"
+                                       Style="{StaticResource NexusSectionHeader}" />
+                            <RadioButton GroupName="CustomRomInstallMode"
+                                         IsChecked="{Binding UseSafeFastbootInstall, Mode=TwoWay}"
+                                         Margin="0,8,0,4"
+                                         Content="Güvenli custom ROM yükleme (önerilen)" />
+                            <RadioButton GroupName="CustomRomInstallMode"
+                                         IsChecked="{Binding UseSafeFastbootInstall, Converter={StaticResource InverseBool}, Mode=TwoWay}"
+                                         Margin="0,4,0,8"
+                                         Content="Gelişmiş — TWRP sideload (fstab / DFE / Magisk)" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource NexusCardElevated}" Margin="0,0,0,16"
+                            Visibility="{Binding ShowSafeInstallCard, Converter={StaticResource BoolToVis}}"
+                            Background="{DynamicResource Nexus.SuccessSubtle}">
+                        <StackPanel>
+                            <TextBlock Text="GÜVENLİ CUSTOM ROM YÜKLEME"
+                                       Style="{StaticResource NexusSectionHeader}" />
+                            <TextBlock Style="{StaticResource Nexus.Text.Body}" TextWrapping="Wrap"
+                                       Text="Tek tık: ROM zip içindeki payload.bin fastboot / fastbootd ile yazılır. TWRP yüklenmez. Recovery'ye girilmez." />
+                            <TextBlock Style="{StaticResource Nexus.Text.Caption}" TextWrapping="Wrap" Margin="0,8,0,0"
+                                       Text="ROM dosyalarına dokunulmaz: fstab patch, DFE zip, Magisk ve TWRP ramdisk yok. Zip nasıl geldiyse öyle flaşlanır." />
+                            <TextBlock Style="{StaticResource Nexus.Text.Caption}" TextWrapping="Wrap" Margin="0,8,0,0"
+                                       Text="Tek ekstra fastboot adımı: vbmeta --disable-verity (dijital imza). ROM imajı değişmez; unsigned custom ROM'un açılması için gerekir." />
+                            <TextBlock Style="{StaticResource Nexus.Text.Caption}" TextWrapping="Wrap" Margin="0,8,0,0"
+                                       Text="Telefon bootloader (FASTBOOT) ekranında, bootloader açık (unlocked) olsun." />
+                            <CheckBox Content="Data format — userdata sil (ilk kurulum, önerilen)"
+                                      IsChecked="{Binding FormatData}" Margin="0,12,0,0"
+                                      Foreground="{DynamicResource Nexus.Danger}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource NexusCardElevated}" Margin="0,0,0,16"
+                            Visibility="{Binding ShowTwrpFlashSection, Converter={StaticResource BoolToVis}}">
+                        <StackPanel>
+                            <TextBlock Text="RECOVERY (TWRP / ORANGEFOX) — önce buradan .img seçin"
+                                       Style="{StaticResource NexusSectionHeader}" />
+                            <TextBlock Style="{StaticResource Nexus.Text.Caption}" TextWrapping="Wrap"
+                                       Text="Kurulumu başlatmadan önce TWRP .img seçmelisiniz (veya «Zaten TWRP'deyim»). Geçici TWRP RAM'dedir; Format Data sonrası manager yeniden başlatır." />
+                            <TextBlock Text="TWRP'ye nasıl girilsin?"
+                                       Style="{StaticResource Nexus.Text.Caption}" Margin="0,12,0,4" />
+                            <ComboBox SelectedIndex="{Binding TwrpLaunchModeIndex}" Margin="0,0,0,4">
+                                <ComboBoxItem Content="Zaten TWRP / recovery'deyim (ADB bağlı)" />
+                                <ComboBoxItem Content="Fastboot'tan geçici TWRP başlat — önerilen (fastboot boot)" />
+                                <ComboBoxItem Content="Kalıcı TWRP yaz — gelişmiş, ROM öncesi önerilmez" />
+                            </ComboBox>
+                            <TextBlock Text="{Binding TwrpLaunchHint, Mode=OneWay}"
+                                       Style="{StaticResource Nexus.Text.Caption}" Margin="0,4,0,0" />
+                            <DockPanel Margin="0,12,0,0">
+                                <Button DockPanel.Dock="Right"
+                                        Command="{Binding PickTwrpImageCommand}"
+                                        Style="{StaticResource NexusPrimaryButton}"
+                                        Content="TWRP .img seç"
+                                        Margin="8,0,0,0"
+                                        MinWidth="140" />
+                                <TextBlock Text="{Binding TwrpImagePath, FallbackValue=TWRP dosyası seçilmedi — önce seçin, TargetNullValue=TWRP dosyası seçilmedi — önce seçin}"
+                                           Style="{StaticResource Nexus.Text.Body}"
+                                           TextTrimming="CharacterEllipsis"
+                                           VerticalAlignment="Center" />
+                            </DockPanel>
+                            <TextBlock Text="Kalıcı yazma yöntemi (yalnızca gelişmiş mod)"
+                                       Style="{StaticResource Nexus.Text.Caption}" Margin="0,12,0,4"
+                                       Visibility="{Binding ShowPermanentTwrpFlashOptions, Converter={StaticResource BoolToVis}}" />
+                            <ComboBox SelectedIndex="{Binding TwrpFlashMethodIndex}" Margin="0,0,0,4"
+                                      Visibility="{Binding ShowPermanentTwrpFlashOptions, Converter={StaticResource BoolToVis}}">
+                                <ComboBoxItem Content="Kalıcı — fastboot flash recovery" />
+                                <ComboBoxItem Content="Kalıcı — fastboot flash boot (Xiaomi A/B)" />
+                            </ComboBox>
+                            <TextBlock Text="{Binding TwrpFlashMethodHint, Mode=OneWay}"
+                                       Style="{StaticResource Nexus.Text.Caption}" Margin="0,4,0,0"
+                                       Visibility="{Binding ShowPermanentTwrpFlashOptions, Converter={StaticResource BoolToVis}}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource NexusCardElevated}" Margin="0,0,0,16"
+                            Visibility="{Binding ShowAdvancedPrepareOptions, Converter={StaticResource BoolToVis}}">
+                        <StackPanel>
+                            <TextBlock Text="DİJİTAL İMZA (AVB / dm-verity)"
+                                       Style="{StaticResource NexusSectionHeader}" />
+                            <TextBlock Style="{StaticResource Nexus.Text.Caption}" TextWrapping="Wrap"
+                                       Text="Custom ROM ve TWRP, stok boot imza zincirini kırar. Bu adım telefonun Android Verified Boot kontrolünü kapatır; aksi halde ROM açılmaz veya TWRP'de takılı kalır. TWRP sideload'dan önce bootloader fastboot'ta çalışır." />
+                            <TextBlock Style="{StaticResource Nexus.Text.Caption}" TextWrapping="Wrap" Margin="0,8,0,0"
+                                       FontFamily="{DynamicResource Nexus.FontMono}"
+                                       Text="fastboot flash vbmeta_ab vbmeta.img --disable-verity --disable-verification" />
+                            <CheckBox Content="İmza kontrolünü kapat (önerilen — stock flash_all ile aynı)"
+                                      IsChecked="{Binding DisableAvbVerity}" Margin="0,12,0,4" />
+                            <TextBlock Text="{Binding VbmetaSourceDisplay}"
+                                       Style="{StaticResource Nexus.Text.Caption}"
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,8" />
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right"
+                                        Command="{Binding ClearStockVbmetaCommand}"
+                                        Style="{StaticResource NexusTertiaryButton}"
+                                        Content="Otomatik"
+                                        Margin="8,0,0,0" />
+                                <Button DockPanel.Dock="Right"
+                                        Command="{Binding PickStockVbmetaCommand}"
+                                        Style="{StaticResource NexusSecondaryButton}"
+                                        Content="Stok vbmeta klasörü"
+                                        Margin="8,0,0,0" />
+                                <TextBlock Text="Kaynak: ROM payload veya orijinal images\vbmeta.img"
+                                           Style="{StaticResource Nexus.Text.Caption}"
+                                           VerticalAlignment="Center"
+                                           TextWrapping="Wrap" />
+                            </DockPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource NexusCardElevated}" Margin="0,0,0,16"
+                            Visibility="{Binding ShowAdvancedPrepareOptions, Converter={StaticResource BoolToVis}}">
+                        <StackPanel>
+                            <TextBlock Text="OTOMATİK WIPE (TWRP komutları)"
+                                       Style="{StaticResource NexusSectionHeader}" />
+                            <CheckBox Content="Önbelleği temizle (twrp wipe cache)"
+                                      IsChecked="{Binding WipeCache}" Margin="0,4" />
+                            <CheckBox Content="Dalvik önbelleğini temizle (twrp wipe dalvik)"
+                                      IsChecked="{Binding WipeDalvik}" Margin="0,4" />
+                            <TextBlock Margin="0,12,0,4"
+                                       Style="{StaticResource NexusSectionHeader}"
+                                       Text="FORCE ENCRYPT" />
+                            <TextBlock Style="{StaticResource Nexus.Text.Caption}" TextWrapping="Wrap"
+                                       Text="{Binding EncryptionPrepHint}" />
+                            <CheckBox Content="ROM sonrası fstab patch — forceencrypt → encryptable (önerilen, DFE yerine)"
+                                      IsChecked="{Binding PatchFstabDisableForceEncrypt}" Margin="0,8,0,4" />
+                            <CheckBox Content="Data format — şifreli /data sıfırlama (ilk kurulum, önerilen)"
+                                      IsChecked="{Binding FormatData}" Margin="0,4,0,0"
+                                      Foreground="{DynamicResource Nexus.Danger}" />
+                            <TextBlock Margin="0,12,0,4"
+                                       Style="{StaticResource Nexus.Text.Caption}"
+                                       Text="Eski yöntem (DFE zip — isteğe bağlı)" />
+                            <CheckBox Content="Kurulumdan önce DFE zip flaşla"
+                                      IsChecked="{Binding FlashDfeZip}" Margin="0,4,0,4" />
+                            <DockPanel Margin="0,4,0,0">
+                                <Button DockPanel.Dock="Right"
+                                        Command="{Binding PickDfeZipCommand}"
+                                        Style="{StaticResource NexusSecondaryButton}"
+                                        Content="DFE .zip seç"
+                                        Margin="8,0,0,0" />
+                                <TextBlock Text="{Binding DfeZipDisplay}"
+                                           Style="{StaticResource Nexus.Text.Body}"
+                                           TextTrimming="CharacterEllipsis"
+                                           VerticalAlignment="Center" />
+                            </DockPanel>
+                            <TextBlock Margin="0,12,0,0"
+                                       Style="{StaticResource Nexus.Text.Caption}"
+                                       TextWrapping="Wrap"
+                                       Text="Format Data = mevcut şifreli veriyi siler (TWRP takılması). Fstab patch = yeni ROM'un fstab.qcom dosyasında kalıcı düzenleme (DFE zip'e gerek kalmaz)." />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource NexusCard}"
+                            BorderBrush="{DynamicResource Nexus.Border}"
+                            BorderThickness="1"
+                            Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="Sorumluluk" Style="{StaticResource NexusSectionHeader}" />
+                            <TextBlock Style="{StaticResource Nexus.Text.Body}" TextWrapping="Wrap"
+                                       Visibility="{Binding UseSafeFastbootInstall, Converter={StaticResource BoolToVis}}"
+                                       Text="Güvenli yükleme TWRP yazmaz ve ROM zip'ini değiştirmez. Yanlış cihaz paketi yine de cihazı kullanılamaz hale getirebilir. Zip'i siz seçersiniz." />
+                            <TextBlock Style="{StaticResource Nexus.Text.Body}" TextWrapping="Wrap"
+                                       Visibility="{Binding UseSafeFastbootInstall, Converter={StaticResource InverseBoolToVis}}"
+                                       Text="ROM zip ve TWRP imajını siz seçersiniz. Yanlış cihaz paketi veya uyumsuz TWRP ciddi hasara yol açabilir. Manager yalnızca seçtiğiniz dosyaları yükler." />
+                        </StackPanel>
+                    </Border>
+
+                    <DockPanel LastChildFill="False">
+                        <Button DockPanel.Dock="Left"
+                                Command="{Binding GoBackCommand}"
+                                Style="{StaticResource NexusSecondaryButton}"
+                                Content="Geri" />
+                        <Button DockPanel.Dock="Right"
+                                Command="{Binding StartInstallCommand}"
+                                Style="{StaticResource NexusDangerButton}"
+                                Content="{Binding StartInstallButtonText}" />
+                    </DockPanel>
+                </StackPanel>
+
+                <!-- Step 3: flash -->
+                <StackPanel Visibility="{Binding IsFlashStep, Converter={StaticResource BoolToVis}}">
+                    <Border Style="{StaticResource NexusCardElevated}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="{Binding FlashStepTitle}"
+                                       Style="{StaticResource NexusSectionHeader}" />
+                            <TextBlock Text="{Binding Package.FileName, FallbackValue=ROM}"
+                                       Style="{StaticResource Nexus.Text.H2}" />
+                            <ProgressBar Height="10" Margin="0,16,0,8"
+                                         Minimum="0" Maximum="100"
+                                         Value="{Binding ProgressPercent, Mode=OneWay}"
+                                         Foreground="{DynamicResource Nexus.Primary}"
+                                         Background="{DynamicResource Nexus.Surface}"
+                                         BorderThickness="0" />
+                            <TextBlock Style="{StaticResource Nexus.Text.Caption}">
+                                <Run Text="{Binding ProgressPercent, Mode=OneWay}" />
+                                <Run Text="%" />
+                            </TextBlock>
+                            <TextBox Text="{Binding ActivityLog, Mode=OneWay}"
+                                     IsReadOnly="True"
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"
+                                     Height="220"
+                                     Margin="0,16,0,0"
+                                     FontFamily="{DynamicResource Nexus.FontMono}"
+                                     FontSize="12"
+                                     Background="{DynamicResource Nexus.Surface}"
+                                     Foreground="{DynamicResource Nexus.TextPrimary}"
+                                     BorderBrush="{DynamicResource Nexus.Border}"
+                                     VerticalScrollBarVisibility="Auto" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource NexusCard}"
+                            Visibility="{Binding InstallSucceeded, Converter={StaticResource BoolToVis}}"
+                            Background="{DynamicResource Nexus.SuccessSubtle}"
+                            Margin="0,0,0,16">
+                        <TextBlock Style="{StaticResource Nexus.Text.Body}" TextWrapping="Wrap"
+                                   Text="{Binding SuccessBannerText}" />
+                    </Border>
+
+                    <DockPanel LastChildFill="False">
+                        <Button DockPanel.Dock="Left"
+                                Command="{Binding GoBackCommand}"
+                                Style="{StaticResource NexusSecondaryButton}"
+                                Content="Geri" />
+                        <Button DockPanel.Dock="Right"
+                                Command="{Binding ResetWizardCommand}"
+                                Style="{StaticResource NexusPrimaryButton}"
+                                Content="Yeni ROM" />
+                    </DockPanel>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

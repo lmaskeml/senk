@@ -1,0 +1,40 @@
+# Build
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.cache
+publish/
+dist/
+
+# Logs / local
+*.log
+logs/
+run-out.txt
+shell-stderr.txt
+tmp_*.cs
+.ajan/
+
+# Android Companion
+AndroidCompanion/local.properties
+AndroidCompanion/.gradle/
+AndroidCompanion/**/build/
+AndroidCompanion/.idea/
+AndroidCompanion/*.iml
+
+# ADB/scrcpy/aapt binaries (keep README)
+tools/adb/*
+!tools/adb/README.txt
+tools/scrcpy/*
+!tools/scrcpy/.gitkeep
+tools/aapt/*
+!tools/aapt/README.txt
+
+# IDE
+.idea/
+*.DotSettings.user
+
+# Peek helper
+tools/PeekApi/
+tools/peekapi.cs

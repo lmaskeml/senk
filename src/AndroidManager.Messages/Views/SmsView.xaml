@@ -1,0 +1,249 @@
+<UserControl x:Class="AndroidManager.Messages.Views.SmsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="1100"
+             Background="{DynamicResource Nexus.Background}">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="{DynamicResource Nexus.SurfaceElevated}" BorderBrush="{DynamicResource Nexus.Border}" BorderThickness="0,0,0,1" Padding="16,12">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Command="{Binding ExportJsonCommand}" Style="{StaticResource NexusTertiaryButton}" Margin="0,0,8,0"
+                            ToolTip="Tüm SMS’leri JSON olarak kaydet">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="CodeJson" Margin="0,0,4,0" />
+                            <TextBlock Text="JSON" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding ExportCsvCommand}" Style="{StaticResource NexusTertiaryButton}" Margin="0,0,8,0"
+                            ToolTip="Tüm SMS’leri CSV olarak kaydet">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="FileDelimited" Margin="0,0,4,0" />
+                            <TextBlock Text="CSV" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding NewMessageCommand}" Style="{StaticResource NexusSecondaryButton}" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="EmailPlus" Margin="0,0,4,0" />
+                            <TextBlock Text="Yeni" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding RefreshCommand}" Style="{StaticResource NexusPrimaryButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="Refresh" Margin="0,0,4,0" />
+                            <TextBlock Text="Yenile" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="SMS" Style="{StaticResource Nexus.Text.H1}" />
+                    <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource Nexus.TextSecondary}" FontSize="12" Margin="0,4,0,0" />
+                    <TextBlock Text="Cihazdaki SMS’leri ADB ile okur. Sessiz gönderim çoğu telefonda engellenir; gerekirse telefonda Gönder’e basarsınız."
+                               Foreground="{DynamicResource Nexus.TextMuted}" FontSize="11" Margin="0,4,16,0" TextWrapping="Wrap" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="320" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" BorderBrush="{DynamicResource Nexus.Border}" BorderThickness="0,0,1,0" Background="{DynamicResource Nexus.Surface}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" Margin="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 md:HintAssist.Hint="Konuşma, kişi veya mesaj ara"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Return" Command="{Binding SearchMessagesCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <Button Grid.Column="1"
+                                Margin="8,0,0,0"
+                                Padding="10,0"
+                                Command="{Binding SearchMessagesCommand}"
+                                ToolTip="Mesaj metninde ara (Enter)">
+                            <md:PackIcon Kind="Magnify" />
+                        </Button>
+                    </Grid>
+                    <TabControl Grid.Row="1" SelectedIndex="{Binding LeftPanelTabIndex}" Margin="0,8,0,0">
+                        <TabItem Header="Konuşmalar">
+                            <ListBox ItemsSource="{Binding Threads}"
+                                     SelectedItem="{Binding SelectedThread}"
+                                     BorderThickness="0"
+                                     Background="Transparent">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="8,6">
+                                            <DockPanel>
+                                                <TextBlock DockPanel.Dock="Right"
+                                                           Text="{Binding LastDateFormatted}"
+                                                           Foreground="{DynamicResource Nexus.TextMuted}" FontSize="11" />
+                                                <TextBlock Text="{Binding EffectiveDisplayName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                            </DockPanel>
+                                            <TextBlock Text="{Binding Address}"
+                                                       Foreground="{DynamicResource Nexus.TextMuted}" FontSize="10" TextTrimming="CharacterEllipsis"
+                                                       Visibility="{Binding ShowAddressSubtitle, Converter={StaticResource BoolToVis}}" />
+                                            <TextBlock Text="{Binding LastBody}"
+                                                       Foreground="{DynamicResource Nexus.TextSecondary}" FontSize="12"
+                                                       TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
+                                            <TextBlock Foreground="{DynamicResource Nexus.TextMuted}" FontSize="10" Margin="0,2,0,0">
+                                                <Run Text="{Binding MessageCount, Mode=OneWay}" />
+                                                <Run Text=" mesaj" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </TabItem>
+                        <TabItem Header="Rehber">
+                            <ListBox ItemsSource="{Binding ContactItems}"
+                                     SelectedItem="{Binding SelectedContact}"
+                                     BorderThickness="0"
+                                     Background="Transparent">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="8,6">
+                                            <Button DockPanel.Dock="Right"
+                                                    Content="Mesaj"
+                                                    Padding="8,4"
+                                                    Margin="4,0,0,0"
+                                                    Command="{Binding DataContext.StartFromContactCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}" />
+                                            <Border DockPanel.Dock="Left" Width="32" Height="32" CornerRadius="16"
+                                                    Background="{DynamicResource Nexus.Primary}" Margin="0,0,8,0">
+                                                <TextBlock Text="{Binding Initials}" Foreground="White"
+                                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                           FontWeight="SemiBold" FontSize="11" />
+                                            </Border>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding PhoneNumber}" Foreground="{DynamicResource Nexus.TextSecondary}" FontSize="11"
+                                                           TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="16">
+                    <ItemsControl ItemsSource="{Binding Messages}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,8"
+                                        Padding="12,8"
+                                        CornerRadius="8"
+                                        MaxWidth="520">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="HorizontalAlignment" Value="Right" />
+                                            <Setter Property="Background" Value="{DynamicResource Nexus.PrimarySubtle}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsIncoming}" Value="True">
+                                                    <Setter Property="HorizontalAlignment" Value="Left" />
+                                                    <Setter Property="Background" Value="{DynamicResource Nexus.Surface}" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource Nexus.Border}" />
+                                                    <Setter Property="BorderThickness" Value="1" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Body}" TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding DateLocal, StringFormat=g}"
+                                                   FontSize="10" Foreground="{DynamicResource Nexus.TextMuted}" Margin="0,4,0,0"
+                                                   HorizontalAlignment="Right" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <Border Grid.Row="1" Background="{DynamicResource Nexus.SurfaceElevated}" BorderBrush="{DynamicResource Nexus.Border}" BorderThickness="0,1,0,0" Padding="12">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBox Grid.Row="0"
+                                 Text="{Binding ComposeAddress, UpdateSourceTrigger=PropertyChanged}"
+                                 md:HintAssist.Hint="Alıcı numarası"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+                        <TextBlock Grid.Row="1" Margin="0,2,0,8"
+                                   Text="{Binding ComposeRecipientHint, Mode=OneWay}"
+                                   Foreground="{DynamicResource Nexus.TextSecondary}" FontSize="11" />
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding ComposeBody, UpdateSourceTrigger=PropertyChanged}"
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                     Height="72"
+                                     md:HintAssist.Hint="Mesaj"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+                            <Button Grid.Column="1"
+                                    Margin="8,0,0,0"
+                                    VerticalAlignment="Stretch"
+                                    Style="{StaticResource NexusPrimaryButton}"
+                                    Command="{Binding SendCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Send" Margin="0,0,4,0" />
+                                    <TextBlock Text="Gönder" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <StatusBar Grid.Row="2">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusMessage}" />
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <ProgressBar Width="100" Height="4" IsIndeterminate="True"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}" />
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</UserControl>

@@ -1,0 +1,11 @@
+<UserControl x:Class="AndroidManager.Shell.Views.ComingSoonView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <TextBlock Text="Yakında"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Foreground="#888"
+                   FontSize="18" />
+    </Grid>
+</UserControl>

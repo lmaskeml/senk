@@ -1,0 +1,247 @@
+<UserControl x:Class="AndroidManager.Security.Views.RomBackupVaultView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:conv="clr-namespace:AndroidManager.Security.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Background="{DynamicResource Nexus.Background}"
+             d:DesignHeight="720" d:DesignWidth="1100">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <conv:InverseBooleanToVisibilityConverter x:Key="InvertBoolToVis" />
+    </UserControl.Resources>
+    <Grid Style="{StaticResource NexusPageRoot}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Margin="24,20,24,0" LastChildFill="False">
+            <StackPanel DockPanel.Dock="Left">
+                <TextBlock Text="Anti-Brick Deposu" Style="{StaticResource Nexus.Text.H1}" />
+                <TextBlock Text="{Binding StatusMessage}"
+                           Style="{StaticResource Nexus.Text.Caption}"
+                           Margin="0,4,0,0" TextWrapping="Wrap" />
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Command="{Binding CancelWorkCommand}"
+                        Style="{StaticResource NexusTertiaryButton}"
+                        Margin="0,0,8,0"
+                        Content="İptal"
+                        Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}" />
+                <Button Command="{Binding RefreshCommand}"
+                        Style="{StaticResource NexusPrimaryButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <md:PackIcon Kind="Refresh" Width="16" Height="16" Margin="0,0,6,0"
+                                     VerticalAlignment="Center"
+                                     Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                        <TextBlock Text="Yenile" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </DockPanel>
+
+        <ProgressBar Grid.Row="1" Height="3" Minimum="0" Maximum="100"
+                     Value="{Binding ProgressPercent, Mode=OneWay}"
+                     Margin="24,12,24,0"
+                     Foreground="{DynamicResource Nexus.Primary}"
+                     Background="Transparent" BorderThickness="0" />
+
+        <Grid Grid.Row="2" Margin="24,16,24,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.15*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Margin="0,0,8,0" Style="{StaticResource NexusCardElevated}">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top">
+                        <TextBlock Text="SİSTEM YEDEĞİ AL" Style="{StaticResource NexusSectionHeader}" />
+                        <WrapPanel Margin="0,0,0,12">
+                            <Border Style="{StaticResource NexusStatusBadge}" Margin="0,0,8,8"
+                                    Background="{DynamicResource Nexus.PrimarySubtle}">
+                                <TextBlock Style="{StaticResource Nexus.Text.Caption}">
+                                    <Run Text="Yöntem: " />
+                                    <Run Text="{Binding MethodLabel, Mode=OneWay}" />
+                                </TextBlock>
+                            </Border>
+                            <Border Style="{StaticResource NexusStatusBadge}" Margin="0,0,8,8"
+                                    Background="{DynamicResource Nexus.SurfaceElevated}">
+                                <TextBlock Style="{StaticResource Nexus.Text.Caption}">
+                                    <Run Text="Cihaz: " />
+                                    <Run Text="{Binding Capability.Codename, FallbackValue=—}" />
+                                </TextBlock>
+                            </Border>
+                        </WrapPanel>
+                        <CheckBox Content="Çekirdek ve kurtarma (boot, dtbo, vendor_boot, recovery)"
+                                  IsChecked="{Binding BackupKernel}" Margin="0,2" />
+                        <CheckBox Content="Şebeke ve IMEI (modem, nvdata, persist) — kritik"
+                                  IsChecked="{Binding BackupRadio}" Margin="0,2"
+                                  Foreground="{DynamicResource Nexus.Warning}" />
+                        <CheckBox Content="Tam sistem yazılımı (super.img — büyük)"
+                                  IsChecked="{Binding BackupSuper}" Margin="0,2" />
+                        <CheckBox Content="Ek firmware (abl, xbl, dsp…)"
+                                  IsChecked="{Binding BackupExtra}" Margin="0,2" />
+                        <TextBlock Margin="0,8,0,8" Style="{StaticResource Nexus.Text.Caption}" TextWrapping="Wrap"
+                                   Text="userdata dökülmez. TWRP'deyken ham dd; açıksa Magisk su ile canlı döküm. exec-out kullanılır (adb shell ikili veriyi bozar)." />
+                    </StackPanel>
+
+                    <DockPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
+                        <Button DockPanel.Dock="Left"
+                                Command="{Binding RebootFastbootCommand}"
+                                Style="{StaticResource NexusSecondaryButton}"
+                                Content="Fastboot'a al" />
+                        <Button DockPanel.Dock="Right"
+                                Command="{Binding StartBackupCommand}"
+                                Style="{StaticResource NexusDangerButton}"
+                                Content="Sistem yedeği al"
+                                IsEnabled="{Binding CanStartBackup}" />
+                    </DockPanel>
+
+                    <ListView ItemsSource="{Binding Partitions}"
+                              Background="Transparent" BorderThickness="0"
+                              Foreground="{DynamicResource Nexus.TextPrimary}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="" Width="36">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding IsSelected}"
+                                                      IsEnabled="{Binding CanSelect}"
+                                                      HorizontalAlignment="Center" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Bölüm" Width="140" DisplayMemberBinding="{Binding Name}" />
+                                <GridViewColumn Header="Kategori" Width="120" DisplayMemberBinding="{Binding CategoryLabel}" />
+                                <GridViewColumn Header="Boyut" Width="80" DisplayMemberBinding="{Binding SizeFormatted}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Column="1" Margin="8,0,0,0" Style="{StaticResource NexusCard}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" MinHeight="180" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="YEDEKTEN GERİ DÖN"
+                               Style="{StaticResource NexusSectionHeader}" />
+                    <TextBlock Grid.Row="1" Margin="0,0,0,8"
+                               Style="{StaticResource Nexus.Text.Caption}" TextWrapping="Wrap"
+                               Text="Oturumu seç, sonra recovery / modem gibi bölümleri işaretle. Fastboot'ta yalnızca işaretlenen .img yazılır." />
+
+                    <ListView Grid.Row="2"
+                              ItemsSource="{Binding Sessions}"
+                              SelectedItem="{Binding SelectedSession}"
+                              Height="96"
+                              Background="Transparent" BorderThickness="0"
+                              Foreground="{DynamicResource Nexus.TextPrimary}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Oturum" Width="220" DisplayMemberBinding="{Binding DisplayName}" />
+                                <GridViewColumn Header="Yöntem" Width="90" DisplayMemberBinding="{Binding Method}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+                    <Grid Grid.Row="3" Margin="0,8,0,0">
+                        <TextBlock Text="Önce bir yedek oturumu seçin — bölümler burada listelenir."
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource Nexus.TextMuted}"
+                                   TextWrapping="Wrap"
+                                   Visibility="{Binding HasRestorePartitions, Converter={StaticResource InvertBoolToVis}}" />
+
+                        <DockPanel Visibility="{Binding HasRestorePartitions, Converter={StaticResource BoolToVis}}">
+                            <StackPanel DockPanel.Dock="Top">
+                                <CheckBox Content="Çekirdek / kurtarma (boot, recovery, dtbo…)"
+                                          IsChecked="{Binding RestoreKernel}" Margin="0,2" />
+                                <CheckBox Content="Şebeke / IMEI (modem, nvdata) — dikkat"
+                                          IsChecked="{Binding RestoreRadio}" Margin="0,2"
+                                          Foreground="{DynamicResource Nexus.Warning}" />
+                                <CheckBox Content="Sistem (super)"
+                                          IsChecked="{Binding RestoreSuper}" Margin="0,2" />
+                                <CheckBox Content="Ek firmware"
+                                          IsChecked="{Binding RestoreExtra}" Margin="0,2" />
+
+                                <TextBox Text="{Binding RestorePartitionFilter, UpdateSourceTrigger=PropertyChanged}"
+                                         md:HintAssist.Hint="Bölüm ara (recovery, modem…)"
+                                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                         Margin="0,8,0,8" />
+
+                                <WrapPanel Margin="0,0,0,8">
+                                    <Button Content="Recovery" Command="{Binding SelectRecoveryOnlyCommand}"
+                                            Style="{StaticResource NexusSecondaryButton}" Margin="0,0,6,4" Padding="8,4" />
+                                    <Button Content="Modem" Command="{Binding SelectModemOnlyCommand}"
+                                            Style="{StaticResource NexusSecondaryButton}" Margin="0,0,6,4" Padding="8,4" />
+                                    <Button Content="Çekirdek" Command="{Binding SelectRestoreKernelOnlyCommand}"
+                                            Style="{StaticResource NexusSecondaryButton}" Margin="0,0,6,4" Padding="8,4" />
+                                    <Button Content="Tümü" Command="{Binding SelectAllRestorePartitionsCommand}"
+                                            Style="{StaticResource NexusSecondaryButton}" Margin="0,0,6,4" Padding="8,4" />
+                                    <Button Content="Hiçbiri" Command="{Binding ClearRestorePartitionSelectionCommand}"
+                                            Style="{StaticResource NexusSecondaryButton}" Margin="0,0,6,4" Padding="8,4" />
+                                </WrapPanel>
+                            </StackPanel>
+
+                            <TextBlock DockPanel.Dock="Bottom"
+                                       Text="{Binding SelectedRestoreSummary}"
+                                       FontWeight="SemiBold" FontSize="12" Margin="0,8,0,0" />
+
+                            <ListView ItemsSource="{Binding RestorePartitions}"
+                                      Background="Transparent" BorderThickness="0"
+                                      Foreground="{DynamicResource Nexus.TextPrimary}"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="" Width="36">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                              HorizontalAlignment="Center" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="Bölüm" Width="130" DisplayMemberBinding="{Binding Name}" />
+                                        <GridViewColumn Header="Kategori" Width="110" DisplayMemberBinding="{Binding CategoryLabel}" />
+                                        <GridViewColumn Header="Boyut" Width="70" DisplayMemberBinding="{Binding SizeFormatted}" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </DockPanel>
+                    </Grid>
+
+                    <TextBox Grid.Row="4"
+                             Text="{Binding ActivityLog, Mode=OneWay}"
+                             IsReadOnly="True"
+                             Height="72"
+                             Margin="0,12,0,0"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             FontFamily="{DynamicResource Nexus.FontMono}"
+                             FontSize="12"
+                             Background="{DynamicResource Nexus.Surface}"
+                             Foreground="{DynamicResource Nexus.TextPrimary}"
+                             BorderBrush="{DynamicResource Nexus.Border}"
+                             VerticalScrollBarVisibility="Auto" />
+
+                    <Button Grid.Row="5"
+                            Command="{Binding RestoreCommand}"
+                            Style="{StaticResource NexusPrimaryButton}"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,12,0,0"
+                            Content="Seçili bölümleri flash et" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

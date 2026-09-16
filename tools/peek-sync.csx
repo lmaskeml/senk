@@ -1,0 +1,10 @@
+using System.Reflection;
+using System.Runtime.Loader;
+var path = args[0];
+var alc = new AssemblyLoadContext("peek", true);
+var asm = alc.LoadFromAssemblyPath(path);
+var t = asm.GetType("AdvancedSharpAdbClient.Models.UnixFileStatus");
+Console.WriteLine(t);
+foreach (var name in Enum.GetNames(t!)) Console.WriteLine(name + "=" + (int)Enum.Parse(t, name));
+var prog = asm.GetType("AdvancedSharpAdbClient.Models.SyncProgressChangedEventArgs");
+foreach (var p in prog!.GetProperties()) Console.WriteLine("PROP " + p.Name + " " + p.PropertyType);

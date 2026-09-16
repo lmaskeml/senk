@@ -1,0 +1,37 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="NexusCard" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource Nexus.Surface}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Nexus.Border}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{DynamicResource Nexus.RadiusCard}" />
+        <Setter Property="Padding" Value="{DynamicResource Nexus.CardPadding}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+    </Style>
+
+    <Style x:Key="NexusCardElevated" TargetType="Border" BasedOn="{StaticResource NexusCard}">
+        <Setter Property="Background" Value="{DynamicResource Nexus.SurfaceElevated}" />
+    </Style>
+
+    <Style x:Key="NexusMetricCard" TargetType="Border" BasedOn="{StaticResource NexusCard}">
+        <Setter Property="Padding" Value="{DynamicResource Nexus.CardPaddingLarge}" />
+        <Setter Property="MinHeight" Value="120" />
+    </Style>
+
+    <Style x:Key="NexusSectionHeader" TargetType="TextBlock" BasedOn="{StaticResource Nexus.Text.SectionLabel}">
+        <Setter Property="Margin" Value="0,0,0,12" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+    </Style>
+
+    <Style x:Key="NexusPageRoot" TargetType="Grid">
+        <Setter Property="Background" Value="{DynamicResource Nexus.Background}" />
+    </Style>
+
+    <Style x:Key="NexusPageScroll" TargetType="ScrollViewer">
+        <Setter Property="Background" Value="{DynamicResource Nexus.Background}" />
+        <Setter Property="Padding" Value="24" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+    </Style>
+</ResourceDictionary>

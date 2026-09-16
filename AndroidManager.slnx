@@ -1,0 +1,20 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AndroidManager.Apps/AndroidManager.Apps.csproj" />
+    <Project Path="src/AndroidManager.Backup/AndroidManager.Backup.csproj" />
+    <Project Path="src/AndroidManager.Core/AndroidManager.Core.csproj" />
+    <Project Path="src/AndroidManager.Device/AndroidManager.Device.csproj" />
+    <Project Path="src/AndroidManager.Files/AndroidManager.Files.csproj" />
+    <Project Path="src/AndroidManager.Gallery/AndroidManager.Gallery.csproj" />
+    <Project Path="src/AndroidManager.Mirror/AndroidManager.Mirror.csproj" />
+    <Project Path="src/AndroidManager.Messages/AndroidManager.Messages.csproj" />
+    <Project Path="src/AndroidManager.Settings/AndroidManager.Settings.csproj" />
+    <Project Path="src/AndroidManager.Security/AndroidManager.Security.csproj" />
+    <Project Path="src/AndroidManager.Shell/AndroidManager.Shell.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AndroidManager.Backup.Tests/AndroidManager.Backup.Tests.csproj" />
+    <Project Path="tests/AndroidManager.Device.Tests/AndroidManager.Device.Tests.csproj" />
+    <Project Path="tests/AndroidManager.Security.Tests/AndroidManager.Security.Tests.csproj" />
+  </Folder>
+</Solution>

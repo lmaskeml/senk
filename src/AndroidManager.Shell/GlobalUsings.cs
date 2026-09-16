@@ -1,0 +1,14 @@
+global using Application = System.Windows.Application;
+global using MessageBox = System.Windows.MessageBox;
+global using MessageBoxButton = System.Windows.MessageBoxButton;
+global using MessageBoxImage = System.Windows.MessageBoxImage;
+global using MessageBoxResult = System.Windows.MessageBoxResult;
+global using UserControl = System.Windows.Controls.UserControl;
+global using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+global using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
+global using OpenFolderDialog = Microsoft.Win32.OpenFolderDialog;
+global using Clipboard = System.Windows.Clipboard;
+global using Binding = System.Windows.Data.Binding;
+global using DataObject = System.Windows.DataObject;
+global using DataFormats = System.Windows.DataFormats;
+global using TextBox = System.Windows.Controls.TextBox;

@@ -1,0 +1,119 @@
+<Window x:Class="AndroidManager.Shell.Views.PairCodeDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:b="clr-namespace:AndroidManager.Shell.Behaviors"
+        Title="Pair Code"
+        Width="400"
+        Height="300"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="#F5F5F5">
+
+    <Grid Margin="28">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Pair Code"
+                   FontSize="20"
+                   FontWeight="SemiBold"
+                   HorizontalAlignment="Center" />
+
+        <TextBlock Grid.Row="1"
+                   Margin="0,8,0,20"
+                   Text="{Binding DeviceName, Mode=OneWay, StringFormat=Telefonda görünen 6 haneli kodu girin&#x0a;{0}}"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Foreground="#666666"
+                   FontSize="13" />
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <StackPanel.Resources>
+                <Style TargetType="TextBox">
+                    <Setter Property="Width" Value="40" />
+                    <Setter Property="Height" Value="48" />
+                    <Setter Property="FontSize" Value="22" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                    <Setter Property="TextAlignment" Value="Center" />
+                    <Setter Property="MaxLength" Value="1" />
+                    <Setter Property="Margin" Value="4,0" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                </Style>
+            </StackPanel.Resources>
+
+            <TextBox x:Name="Box1" Text="{Binding D1, UpdateSourceTrigger=PropertyChanged}">
+                <i:Interaction.Behaviors>
+                    <b:DigitBoxBehavior NextBox="{Binding ElementName=Box2}" />
+                </i:Interaction.Behaviors>
+            </TextBox>
+            <TextBox x:Name="Box2" Text="{Binding D2, UpdateSourceTrigger=PropertyChanged}">
+                <i:Interaction.Behaviors>
+                    <b:DigitBoxBehavior NextBox="{Binding ElementName=Box3}" PrevBox="{Binding ElementName=Box1}" />
+                </i:Interaction.Behaviors>
+            </TextBox>
+            <TextBox x:Name="Box3" Text="{Binding D3, UpdateSourceTrigger=PropertyChanged}">
+                <i:Interaction.Behaviors>
+                    <b:DigitBoxBehavior NextBox="{Binding ElementName=Box4}" PrevBox="{Binding ElementName=Box2}" />
+                </i:Interaction.Behaviors>
+            </TextBox>
+
+            <TextBlock Text="—"
+                       Margin="6,0"
+                       VerticalAlignment="Center"
+                       Foreground="#999999" />
+
+            <TextBox x:Name="Box4" Text="{Binding D4, UpdateSourceTrigger=PropertyChanged}">
+                <i:Interaction.Behaviors>
+                    <b:DigitBoxBehavior NextBox="{Binding ElementName=Box5}" PrevBox="{Binding ElementName=Box3}" />
+                </i:Interaction.Behaviors>
+            </TextBox>
+            <TextBox x:Name="Box5" Text="{Binding D5, UpdateSourceTrigger=PropertyChanged}">
+                <i:Interaction.Behaviors>
+                    <b:DigitBoxBehavior NextBox="{Binding ElementName=Box6}" PrevBox="{Binding ElementName=Box4}" />
+                </i:Interaction.Behaviors>
+            </TextBox>
+            <TextBox x:Name="Box6" Text="{Binding D6, UpdateSourceTrigger=PropertyChanged}">
+                <i:Interaction.Behaviors>
+                    <b:DigitBoxBehavior PrevBox="{Binding ElementName=Box5}" />
+                </i:Interaction.Behaviors>
+            </TextBox>
+        </StackPanel>
+
+        <TextBlock Grid.Row="3"
+                   Text="{Binding ErrorMessage}"
+                   Foreground="#C62828"
+                   FontSize="12"
+                   HorizontalAlignment="Center"
+                   Margin="0,12,0,0"
+                   MinHeight="18" />
+
+        <Grid Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    Command="{Binding CancelCommand}"
+                    Content="İptal"
+                    Height="40"
+                    IsCancel="True" />
+            <Button Grid.Column="2"
+                    Command="{Binding ConfirmCommand}"
+                    Content="Onayla"
+                    Height="40"
+                    IsDefault="True"
+                    Background="#4CAF50"
+                    Foreground="White" />
+        </Grid>
+    </Grid>
+</Window>

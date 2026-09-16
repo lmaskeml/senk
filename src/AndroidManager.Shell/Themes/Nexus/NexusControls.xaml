@@ -1,0 +1,331 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework">
+
+    <Style x:Key="NexusPrimaryButton" TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource Nexus.Primary}" />
+        <Setter Property="Foreground" Value="#0B0F14" />
+        <Setter Property="FontFamily" Value="{DynamicResource Nexus.Font}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                            CornerRadius="{DynamicResource Nexus.RadiusControl}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Nexus.PrimaryHover}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Nexus.PrimaryHover}" />
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="NexusSecondaryButton" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Nexus.Font}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Padding" Value="14,9" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                            BorderBrush="{DynamicResource Nexus.Border}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource Nexus.RadiusControl}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Nexus.SurfaceHover}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Nexus.Primary}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="NexusTertiaryButton" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.TextSecondary}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Nexus.Font}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Padding" Value="8,6" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="Transparent" Padding="{TemplateBinding Padding}"
+                            CornerRadius="{DynamicResource Nexus.RadiusControl}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Nexus.SurfaceHover}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="NexusDangerButton" TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource Nexus.DangerSubtle}" />
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.Danger}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Nexus.Font}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="14,9" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                            BorderBrush="{DynamicResource Nexus.Danger}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource Nexus.RadiusControl}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Nexus.Danger}" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="NexusQuickAction" TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource Nexus.SurfaceElevated}" />
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Nexus.Font}" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Padding" Value="12,14" />
+        <Setter Property="MinHeight" Value="72" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                            BorderBrush="{DynamicResource Nexus.Border}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource Nexus.RadiusControl}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Nexus.SurfaceHover}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Nexus.Primary}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="GridViewColumnHeader">
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Nexus.Font}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Background" Value="{DynamicResource Nexus.SurfaceElevated}" />
+        <Setter Property="Padding" Value="8,6" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Nexus.Border}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+    </Style>
+
+    <Style TargetType="ListViewItem">
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Nexus.Font}" />
+        <Setter Property="FontSize" Value="13.5" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Padding" Value="4,4" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+                <Setter Property="Background" Value="{DynamicResource Nexus.PrimarySubtle}" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Nexus.SurfaceHover}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="ListBoxItem">
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Nexus.Font}" />
+        <Setter Property="FontSize" Value="13.5" />
+    </Style>
+
+    <Style x:Key="NexusOutlinedTextBox" TargetType="TextBox"
+           BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource Nexus.Primary}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource Nexus.PrimarySubtle}" />
+        <Setter Property="md:HintAssist.Foreground" Value="{DynamicResource Nexus.TextMuted}" />
+        <Setter Property="md:HintAssist.Background" Value="Transparent" />
+    </Style>
+
+    <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource Nexus.Primary}" />
+        <Setter Property="md:HintAssist.Foreground" Value="{DynamicResource Nexus.TextMuted}" />
+    </Style>
+
+    <Style TargetType="PasswordBox" BasedOn="{StaticResource MaterialDesignPasswordBox}">
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource Nexus.Primary}" />
+        <Setter Property="md:HintAssist.Foreground" Value="{DynamicResource Nexus.TextMuted}" />
+    </Style>
+
+    <Style TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+        <Setter Property="md:HintAssist.Foreground" Value="{DynamicResource Nexus.TextMuted}" />
+        <Setter Property="md:HintAssist.Background" Value="Transparent" />
+    </Style>
+
+    <Style TargetType="ComboBoxItem">
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+        <Setter Property="Background" Value="{DynamicResource Nexus.Surface}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <!-- Closed box stays light-on-dark; popup items use theme ink on Surface (not SidebarText). -->
+    <Style x:Key="SidebarDeviceComboBox" TargetType="ComboBox"
+           BasedOn="{StaticResource MaterialDesignComboBox}">
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.SidebarText}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Nexus.SidebarCardBorder}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="md:HintAssist.Hint" Value="Cihaz seç" />
+        <Setter Property="md:HintAssist.Foreground" Value="{DynamicResource Nexus.SidebarTextMuted}" />
+        <Setter Property="md:HintAssist.Background" Value="Transparent" />
+        <Setter Property="md:TextFieldAssist.UnderlineBrush" Value="{DynamicResource Nexus.Primary}" />
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ComboBoxItem">
+                    <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+                    <Setter Property="Background" Value="{DynamicResource Nexus.Surface}" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Padding" Value="12,8" />
+                    <Setter Property="MinHeight" Value="36" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="SnapsToDevicePixels" Value="True" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ComboBoxItem">
+                                <Border x:Name="Bd"
+                                        Background="{TemplateBinding Background}"
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Left"
+                                                      VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsHighlighted" Value="True">
+                                        <Setter TargetName="Bd" Property="Background"
+                                                Value="{DynamicResource Nexus.SurfaceHover}" />
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Bd" Property="Background"
+                                                Value="{DynamicResource Nexus.SurfaceHover}" />
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.45" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+    </Style>
+
+    <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRadioButton}">
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+    </Style>
+
+    <Style x:Key="NexusCaptionButton" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource Nexus.TextPrimary}" />
+        <Setter Property="Width" Value="46" />
+        <Setter Property="Height" Value="38" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Nexus.SurfaceHover}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="NexusCaptionCloseButton" TargetType="Button" BasedOn="{StaticResource NexusCaptionButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}">
+                        <ContentPresenter x:Name="Content" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Nexus.Danger}" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
